@@ -175,7 +175,7 @@
   | --text=    | string       | set label text    | "Set options below:" |
   | --type=    | check\|radio | set list type     | check                |
   | --options= | csv          | set options list  |
-  | --default= | radio: string \| check: csv | radio: default option \| check: set option to true |
+  | --default= | radio: string<br/>check: csv | radio: default option<br/>check: set option to true |
   | --anchor=  | w\|e\|c      | list placement in window | w             |
   | --help     |              | this help         |
 * returns:  
