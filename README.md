@@ -41,7 +41,7 @@
   | *directory path* | 1      | 255   |
 * example:  
 `tpmg --directory --title="Select a Directory" --exist`
-* screenshot:
+* screenshot:  
 ![DirectoryDialog](screenshots/DirectoryDialog.png "DirectoryDialog")
 
 ##### FileSelect dialog
@@ -57,7 +57,7 @@
   | *files path* | 1      | 255   |
 * example:  
 `tpmg --fileselect --title="Select a File" --single`
-* screenshot:
+* screenshot:  
 ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
 
 ##### FileSave dialog
@@ -74,7 +74,7 @@
   | *file path* | 1      | 255   |
 * example:  
 `tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm`
-* screenshot:
+* screenshot:  
 ![FileSaveDialog](screenshots/FileSaveDialog.png "FileSaveDialog")
 
 ##### Information dialog
@@ -93,7 +93,7 @@
   the button<sup>2</sup> name
 * example:  
 `tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"`
-* screenshot:
+* screenshot:  
 ![InformationDialog](screenshots/InformationDialog.png "InformationDialog")
 
 ##### Password dialog
@@ -109,10 +109,10 @@
   | *username* *password* | 1      | 255   |
 * example:  
 `tpmg --password --title="Welcome $USER" --nousername`
-* screenshot:
+* screenshot:  
 ![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
 
-##### Password dialog
+##### Entry dialog
 * options:
   | option        | type   | description      | default             |
   |:-------------:|:------:|:----------------:|:-------------------:|
@@ -125,7 +125,7 @@
   | *entry* | 1      | 255   |
 * example:  
 `tpmg --entry --title="Search terms" --text="Search for:"`
-* screenshot:
+* screenshot:  
 ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
 
 ##### Text dialog
@@ -145,7 +145,7 @@
   | ok | 1      | 255   |
 * example:  
 `tpmg --text --title="README" --file="~/README.txt" --edit --font="{DejaVu Sans Mono} 12 bold"`
-* screenshot:
+* screenshot:  
 ![TextDialog](screenshots/TextDialog.png "TextDialog")
 
 ##### Scale dialog
@@ -164,7 +164,7 @@
   | *scale* | 1      | 255   |
 * example:  
 `tpmg --scale --title="Adjust Transparency" --text="Choose window transparency:" --min="0" --max="100" --value="20"`
-* screenshot:
+* screenshot:  
 ![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
 
 ##### List dialog
@@ -185,10 +185,10 @@
   | check: true\|false list | 1      | 255   |
 * example:  
 `tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="w"`
-* screenshot:
+* screenshot:  
 ![ListDialog](screenshots/ListDialog.png "ListDialog")
 
-##### Scale dialog
+##### Progress dialog
 * description:  
 **Progress** dialog reads data from **stdin** line by line.
 Lines must be prefixed with `tpmg:`. All other lines are ignored.
@@ -220,8 +220,9 @@ echo "This line will be ignored"; sleep 1
 echo "tpmg:100"; echo "tpmg:Done."
 ) | tpmg --progress --color="#948b84" --auto
 ```
-* screenshot:
+* screenshot:  
 ![ProgressDialog](screenshots/ProgressDialog.png "ProgressDialog")
+* bugs: wrong behavior on pulsing progress bar (not critical though)
 
 ### Dependencies
 * **Tcl** version 8.6 or later.
