@@ -1,0 +1,1020 @@
+#!/usr/bin/env tclsh
+
+package require Tk
+
+################################################################################
+# VARIABLES
+#
+namespace eval tPMG {
+  variable Cmd       {}
+  variable cmdReturn {}
+  variable Cancel    {___tPMGCancel___}
+  variable Error     {___tPMGError___}
+
+  variable helpBasic {
+usage: tpmg <options> <details>
+
+basic options:
+  dialog windows:
+    --color         display Color Select dialog
+    --directory     display Directory Select dialog
+    --fileselect    display File Select dialog
+    --filesave      display File Save dialog
+    --information   display Information dialog
+    --password      display Password dialog
+    --entry         display Entry dialog
+    --text          display Text dialog
+    --scale         display Scale dialog
+    --list          display List dialog
+    --progress      display Progress dialog
+
+  help:
+    --help          this help
+    --help all      print options for all available dialogs
+    --help <dialog> print all available options for <dialog>
+}
+  # namespace for dialogs
+  namespace eval dialog {
+    array set list     {}
+      set list(radio)  {}
+    variable response  {}
+    variable text      {}
+    variable password  {}
+    variable value     0
+  # end of namespace tPMG::dialog
+  }
+  # namespace and variables for the help system
+  namespace eval help {
+    variable Color {
+options for Color Select dialog:
+  --title="string"    set window title  [default: "Select a Color"]
+  --color="#hexcolor" set initial color [default: "#d9d9d9"]
+  --help              this help
+
+returns: color hex code on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --color --title="Choose Color" --color="#eed421"
+}
+    variable Directory {
+options for Directory Select dialog:
+  --title="string" set window title     [default: "Select a Directory"]
+  --exist          directory must exist [no default]
+  --help           this help
+
+returns: directory path on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --directory --title="Select a Directory" --exist
+}
+    variable FileSelect {
+options for Files Select dialog:
+  --title="string" set window title [default: "Select Files"]
+  --single         single selection [no default]
+  --help           this help
+
+returns: file path on 'Open', 1 on 'Cancel', 255 on error
+  on multiple selection, returns list
+
+example: tpmg --fileselect --title="Select a File" --single
+}
+    variable FileSave {
+options for File Save dialog:
+  --title="string"  set window title            [default: "Save File"]
+  --file="filepath" set initial file            [no default]
+  --noconfirm       do not confirm on overwrite [no default]
+  --help            this help
+
+returns: file path on 'Save', 1 on 'Cancel', 255 on error
+
+example: tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
+}
+    variable Information {
+options for Information dialog:
+  --title="string"    set window title         [no default]
+  --icon="one of: info,error,question,warning"
+                      icon to use in dialog    [default: "info"]
+  --button="one of: ok,okcancel,yesno,yesnocancel,retrycancel,abortretryignore"
+                      buttons to use in dialog [default: "ok"]
+  "first non option string"
+                      main message (bold)
+  "all" "other" "strings"
+                      message details (every string in a new line)
+  --help              this help
+
+returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
+
+example: tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"
+}
+    variable Password {
+options for Password dialog:
+  --title="string" set window title          [default: "Login As"]
+  --nousername     hide the "Username" entry [no default]
+  --help           this help
+
+returns: list with username and password on 'OK', 1 on 'Cancel', 255 on error
+  --nousername: returns only password
+
+example: tpmg --password --title="Welcome $USER" --nousername
+}
+    variable Entry {
+options for Entry dialog:
+  --title="string" set window title [default: "Enter Text"]
+  --text="string"  set label text   [default: "Enter text below:"]
+  --help           this help
+
+returns: entry string on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --entry --title="Search terms" --text="Search for:"
+}
+    variable Scale {
+options for Scale dialog:
+  --title="string"  set window title  [default: "Adjust Value"]
+  --text="string"   set label text    [default: "Adjust value below:"]
+  --min="integer"   set min value     [default: "0"]
+  --max="integer"   set max value     [default: "100"]
+  --value="integer" set initial value [default: "0"]
+  --help            this help
+
+returns: scale value on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --scale --title="Adjust Transparency" --text="Choose window transparency:" --min="0" --max="100" --value="20"
+}
+    variable Text {
+options for Text dialog:
+  --title="string"  set window title [default: "Show Text"]
+  --file="filepath" file to show     [no default]
+  --edit            can edit text    [default: cannot edit]
+  --font="{font name} size bold/italic/underline/overstrike"
+                    font to use      [default: "TkFixedFont"]
+  "other" "non option" "strings"
+                    text body (every string in a new line)
+  --help            this help
+
+in case of multiple inputs:
+  Text will concatenate the result, with hierarchy: file string stdin
+
+returns: ok on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --text --title="README" --file="~/README.txt" --edit --font="{DejaVu Sans Mono} 12 bold"
+}
+    variable List {
+options for List dialog:
+  --title="string"      set window title    [default: "Set Options"]
+  --text="string"       set label text      [default: "Set options below:"]
+  --type="radio|check"  set list type       [default: "check"]
+  --options="comma separated list"
+                        set options list    [no default]
+  --default="radio:string|check:comma separated list"
+      for radiolist:    default radio value [no default]
+      for checklist:    set <option> "true" [no default]
+  --anchor="w|e|c"      placement in window [default: "w"]
+  --help                this help
+
+returns:
+  radiolist: selected string on 'OK', 1 on 'Cancel', 255 on error
+  checklist: true/false list on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="center"
+}
+    variable Progress {
+Progress dialog reads data from stdin line by line.
+Lines must be prefixed with "tpmg:". All other lines are ignored.
+If the rest are only numbers, the progress bar advances to that number.
+Else, it updates the label text.
+
+options for Progress dialog:
+  --title="string"    set window title           [default: "Show Progress"]
+  --text="string"     set label text             [no default]
+  --color="#hexcolor" set progress bar color     [default: Tk default]
+  --pulse             pulsating progress bar     [no default]
+  --auto              close window on completion [no default]
+  --max="integer"     set max bar value          [default: "100"]
+  --value="integer"   set initial bar value      [default: "0"]
+  --help              this help
+
+returns: ok on 'OK', 1 on 'Cancel', 255 on error
+
+bugs: wrong behavior on --pulse
+
+example:
+#!/usr/bin/env sh
+(
+echo "tpmg:Starting jobs..."; sleep 1
+echo "tpmg:30"; echo "tpmg:Setting variables..."; sleep 1
+echo "tpmg:70"; echo "tpmg:Clearing cache..."; sleep 1
+echo "This line will be ignored"; sleep 1
+echo "tpmg:100"; echo "tpmg:Done."
+) | tpmg --progress --color="#948b84" --auto
+}
+  # end of namespace tPMG::help
+  }
+#end of namespace tPMG
+}
+
+################################################################################
+# COLOR SELECT DIALOG
+#
+proc tPMG::dialog::Color {args} {
+  set title "Select a Color"
+  set color "#d9d9d9"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --color=* {
+        set color [string range $option 8 end]
+      }
+      --help {
+        tPMG::Help "color"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "color" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  wm withdraw .
+  if {[catch {set response \
+    [tk_chooseColor -title $title -initialcolor $color]} msg]} {
+    puts stderr $msg
+    return $tPMG::Error
+  }
+  if {$response eq ""} {return $tPMG::Cancel}
+  return $response
+}
+
+################################################################################
+# DIRECTORY SELECT DIALOG
+#
+proc tPMG::dialog::Directory {args} {
+  set title "Select a Directory"
+  set exist "false"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --exist {
+        set exist "true"
+      }
+      --help {
+        tPMG::Help "directory"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "directory" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  wm withdraw .
+  set response [file nativename [tk_chooseDirectory -title $title -mustexist $exist]]
+  if {$response eq ""} {return $tPMG::Cancel}
+  return $response
+}
+
+################################################################################
+# FILE SELECT DIALOG
+#
+proc tPMG::dialog::FileSelect {args} {
+  set title  "Select Files"
+  set single "true"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --single {
+        set single "false"
+      }
+      --help {
+        tPMG::Help "fileselect"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "fileselect" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  wm withdraw .
+  set response [file nativename [tk_getOpenFile \
+    -title $title -multiple $single]]
+  if {$response eq ""} {return $tPMG::Cancel}
+  return $response
+}
+
+################################################################################
+# FILE SAVE DIALOG
+#
+proc tPMG::dialog::FileSave {args} {
+  set title   "Save File"
+  set confirm "true"
+  set file    ""
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --file=* {
+        set file [file nativename [string range $option 7 end]]
+      }
+      --noconfirm {
+        set confirm "false"
+      }
+      --help {
+        tPMG::Help "filesave"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "filesave" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  wm withdraw .
+  set response [file nativename [tk_getSaveFile \
+    -title $title -confirmoverwrite $confirm -initialfile $file]]
+  if {$response eq ""} {return $tPMG::Cancel}
+  return $response
+}
+
+################################################################################
+# INFORMATION DIALOG
+#
+proc tPMG::dialog::Information {args} {
+  set default ""
+  set icon    "info"
+  set type    "ok"
+  set title   ""
+  set message ""
+  set detail  [list]
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --icon=* {
+        set valid [list error info question warning]
+        set icon [string range $option 7 end]
+        if {$icon ni $valid} {
+          puts stderr "unknown --icon option: $icon"
+          puts stderr "use one of: $valid"
+          return $tPMG::Error
+        }
+      }
+      --button=* {
+        set valid [list ok okcancel yesno yesnocancel retrycancel abortretrycancel]
+        set type [string range $option 9 end]
+        if {$type ni $valid} {
+          puts stderr "unknown --button option: ${type}"
+          puts stderr "use one of: $valid"
+          return $tPMG::Error
+        }
+      }
+      --help {
+        tPMG::Help "information"
+        exit 0
+      }
+      default {
+        if {$message eq ""} {
+          set message $option
+        } else {
+          lappend detail $option
+        }
+      }
+    }
+  }
+  # define default button (on Enter/Return)
+  switch -- [string index $type 0] {
+    o {set default "ok"}
+    y {set default "yes"}
+    r {set default "retry"}
+    a {set default "retry"}
+  }
+  # every string in details is a line
+  if {$detail ne ""} {
+    set detail [join $detail "\n"]
+  }
+  set cmd [list tk_messageBox]
+  foreach config [list default icon type title message detail] {
+    lappend cmd -${config} [subst $[subst $config]]
+  }
+  wm withdraw .
+  if {[catch {set response [{*}$cmd]} msg]} {
+    puts stderr $msg
+    return $tPMG::Error
+  } else {
+    return $response
+  }
+}
+
+################################################################################
+# PASSWORD DIALOG
+#
+proc tPMG::dialog::Password {args} {
+  set title    "Login As"
+  set username "true"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --nousername {
+        set username "false"
+      }
+      --help {
+        tPMG::Help "password"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "password" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  ttk::labelframe .fuser -relief flat -text "Username:"
+  ttk::labelframe .fpass -relief flat -text "Password:"
+  ttk::entry .user -textvariable tPMG::dialog::text
+  ttk::entry .pass -show "*" -textvariable tPMG::dialog::password
+  ttk::button .ok -text "OK" -command {
+    if {$tPMG::dialog::text eq ""} {
+      set tPMG::dialog::response $tPMG::dialog::password
+    } else {
+      lappend tPMG::dialog::response \
+        $tPMG::dialog::text $tPMG::dialog::password
+    }
+  }
+  ttk::button .cancel -text "Cancel" -command {
+    set tPMG::dialog::response $tPMG::Cancel
+  }
+  pack .user -in .fuser
+  pack .pass -in .fpass
+  if {$username eq "false"} {
+    pack .fpass -pady 5
+    focus .pass
+  } else {
+    pack .fuser .fpass -pady 5
+    focus .user
+  }
+  pack .ok .cancel -padx 10 -pady 5 -side left
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  wm title     . $title
+  wm resizable . 0 0
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
+# ENTRY DIALOG
+#
+proc tPMG::dialog::Entry {args} {
+  set title "Enter Text"
+  set text  "Enter text below:"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --text=*  {
+        set text [string range $option 7 end]
+      }
+      --help {
+        tPMG::Help "entry"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "entry" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  ttk::labelframe .fentry -relief flat -text $text
+  ttk::entry .entry -textvariable tPMG::dialog::text
+  ttk::button .ok -text "OK" -command {
+    set tPMG::dialog::response $tPMG::dialog::text
+  }
+  ttk::button .cancel -text "Cancel" -command {
+    set tPMG::dialog::response $tPMG::Cancel
+  }
+  pack .entry -in .fentry
+  pack .fentry -pady 5
+  pack .ok .cancel -padx 10 -pady 5 -side left
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  wm title     . $title
+  wm resizable . 0 0
+  focus .entry
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
+# SCALE DIALOG
+#
+proc tPMG::dialog::Scale {args} {
+  set title "Adjust Value"
+  set text  "Adjust value below:"
+  set from  0
+  set to    100
+  set value 0
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --text=*  {
+        set text [string range $option 7 end]
+      }
+      --min=* {
+        set from [string range $option 6 end]
+        if {![string is integer $from]} {
+          puts stderr "not an integer: $from"
+          return $tPMG::Error
+        }
+        set tPMG::dialog::value $from
+      }
+      --max=* {
+        set to [string range $option 6 end]
+        if {![string is integer $to]} {
+          puts stderr "not an integer: $to"
+          return $tPMG::Error
+        }
+      }
+      --value=* {
+        set value [string range $option 8 end]
+        if {![string is integer $value]} {
+          puts stderr "not an integer: $value"
+          return $tPMG::Error
+        }
+        set tPMG::dialog::value $value
+      }
+      --help {
+        tPMG::Help "scale"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "scale" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  # resolve possible conflict on label text
+  if {$from != 0 && $value != 0} {
+    set tPMG::dialog::value $value
+  }
+  ttk::labelframe .fscale -relief flat -text $text
+  ttk::scale .scale -from $from -to $to -value $value \
+    -variable tPMG::dialog::value
+  ttk::label .value -relief flat -anchor center \
+    -textvariable tPMG::dialog::value
+  ttk::button .ok -text "OK" -command {
+    set tPMG::dialog::response $tPMG::dialog::value
+  }
+  ttk::button .cancel -text "Cancel" -command {
+    set tPMG::dialog::response $tPMG::Cancel
+  }
+  pack .scale .value -in .fscale -fill x
+  pack .fscale -padx 10 -pady 5 -fill x -expand true
+  pack .ok .cancel -padx 10 -pady 5 -side left
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  wm title     . $title
+  wm resizable . 0 0
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
+# TEXT DIALOG
+#
+proc tPMG::dialog::Text {args} {
+  set title "Show Text"
+  set file  ""
+  set text  [list]
+  set edit  "false"
+  set wrap  "none"
+  set font  "TkFixedFont"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --file=*  {
+        set file [file nativename [string range $option 7 end]]
+        if {[file isfile $file] == 0 || [file readable $file] == 0} {
+          puts stderr "${::argv0}: cannot open $file"
+          return $tPMG::Error
+        }
+      }
+      --edit {
+        set edit "true"
+      }
+      --wrap {
+        set wrap "word"
+      }
+      --font=* {
+        set font [string range $option 7 end]
+      }
+      --help {
+        tPMG::Help "text"
+        exit 0
+      }
+      default {
+        lappend text $option
+      }
+    }
+  }
+  ttk::frame .f
+  tk::text .text -relief sunken -highlightthickness 0 -wrap $wrap \
+    -xscrollcommand {.xscroll set} -yscrollcommand {.yscroll set}
+  ttk::scrollbar .yscroll -orient vertical   -command {.text yview}
+  ttk::scrollbar .xscroll -orient horizontal -command {.text xview}
+  ttk::button .ok -text "OK" -command {set tPMG::dialog::response "ok"}
+  ttk::button .cancel -text "Cancel" -command {set tPMG::dialog::response $tPMG::Cancel}
+  grid .text    -in .f -row 0 -column 0 -sticky nswe
+  grid .yscroll -in .f -row 0 -column 1 -sticky ns
+  grid .xscroll -in .f -row 1 -column 0 -sticky we
+  grid rowconfigure    .f .text -weight 1
+  grid columnconfigure .f .text -weight 1
+  pack .f -fill both -expand true
+  pack .ok .cancel -padx 10 -pady 5 -side left -expand true
+  # text from file
+  if {$file ne ""} {
+    if {[catch {set data [open $file r]} msg]} {
+      puts stderr $msg
+      return $tPMG::Error
+    }
+    chan configure $data -translation auto
+    .text insert end [chan read $data]
+    chan close $data
+  }
+  # text from command line
+  if {$text ne ""} {
+    .text insert end [join $text "\n"]
+    .text insert end "\n"
+  }
+  # text from pipe
+  chan event stdin readable {
+    set data ""
+    while {[gets stdin line] >= 0} {
+      append data $line "\n"
+    }
+    chan event stdin readable {}
+    set data [string range $data 0 end-1]
+    if {[llength $data] > 0} {
+      set state [.text cget -state]
+      .text configure -state normal
+      .text insert end $data
+      .text configure -state $state
+    }
+  }
+  if {$edit eq "false"} {
+    .text configure -state disabled
+  }
+  .text configure -font $font
+  .text mark set insert 0.0
+  .text see insert
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  wm title     . $title
+  wm resizable . 0 0
+  focus .text
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
+# LIST DIALOG
+#
+proc tPMG::dialog::List {args} {
+  set title   "Set Options"
+  set text    "Set options below:"
+  set type    "check"
+  set options ""
+  set anchor  "w"
+  set default ""
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --text=* {
+        set text [string range $option 7 end]
+      }
+      --type=* {
+        set valid [list check radio]
+        set type [string range $option 7 end]
+        if {$type ni $valid} {
+          puts stderr "unknown --type option: $type"
+          puts stderr "use one of: $valid"
+          return $tPMG::Error
+        }
+      }
+      --options=* {
+        set options [split [string range $option 10 end] ","]
+      }
+      --anchor=* {
+        set valid [list w e c]
+        set anchor [string range $option 9 end]
+        if {$anchor ni $valid} {
+          puts stderr "unknown --anchor option: $anchor"
+          puts stderr "use one of: $valid"
+          return $tPMG::Error
+        }
+      }
+      --default=* {
+        set default [split [string range $option 10 end] ","]
+      }
+      --help {
+        tPMG::Help "list"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "list" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  ttk::labelframe .list -relief flat -text $text
+  if {$type eq "radio"} {
+    set tPMG::dialog::list(radio) [join $default]
+    foreach opt $options {
+      set w [string cat "." [string tolower $opt]]
+      ttk::radiobutton $w -text $opt \
+        -variable tPMG::dialog::list(radio) -value $opt
+    }
+    ttk::button .ok -text "OK" -command {
+      lappend tPMG::dialog::response $tPMG::dialog::list(radio)
+    }
+  } else {
+    foreach opt $options {
+      set w [string cat "." [string tolower $opt]]
+      if {$opt in $default} {
+        set tPMG::dialog::list($opt) "true"
+      } else {
+        set tPMG::dialog::list($opt) "false"
+      }
+      ttk::checkbutton $w -text $opt -onvalue "true" -offvalue "false" \
+        -variable tPMG::dialog::list($opt)
+    }
+    ttk::button .ok -text "OK" -command [list \
+      foreach i $options {
+        lappend tPMG::dialog::response $tPMG::dialog::list($i)
+      }
+    ]
+  }
+  ttk::button .cancel -text "Cancel" -command {set tPMG::dialog::response $tPMG::Cancel}
+  foreach win $options {
+    set win [string cat "." [string tolower $win]]
+    pack $win -in .list -anchor $anchor
+    pack .list -padx 5 -pady 5
+  }
+  pack .ok .cancel -padx 10 -pady 5 -side left
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  wm title     . $title
+  wm resizable . 0 0
+  focus .ok
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
+# PROGRESS DIALOG
+#
+# read from pipe helper proc/coroutine
+proc tPMG::dialog::readPipe {auto} {
+  yield [after 1 [info coroutine]]
+  while {[gets stdin line] >= 0} {
+    if {[string range $line 0 4] eq "tpmg:"} {
+      set line [string range $line 5 end]
+      if {[string is digit $line]} {
+        set tPMG::dialog::value $line
+      } else {
+        set tPMG::dialog::text $line
+      }
+    }
+    yield [after 10 [info coroutine]]
+  }
+  .ok configure -state normal
+  focus .ok
+  # auto close progress window
+  if {$auto eq "true"} {.ok invoke}
+}
+
+proc tPMG::dialog::Progress {args} {
+  set title "Show Progress"
+  set text  ""
+  set color [ttk::style lookup TProgressbar -background]
+  set type  "determinate"
+  set auto  "false"
+  set max   100
+  set value 0
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --text=* {
+        set tPMG::dialog::text [string range $option 7 end]
+      }
+      --color=* {
+        set color [string range $option 8 end]
+      }
+      --pulse {
+        set type "indeterminate"
+      }
+      --auto {
+        set auto "true"
+      }
+      --max=* {
+        set max [string range $option 6 end]
+        if {![string is integer $max]} {
+          puts stderr "not an integer: $max"
+          return $tPMG::Error
+        }
+      }
+      --value=* {
+        set value [string range $option 8 end]
+        if {![string is integer $value]} {
+          puts stderr "not an integer: $value"
+          return $tPMG::Error
+        }
+        set tPMG::dialog::value $value
+      }
+      --help {
+        tPMG::Help "progress"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "progress" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  ttk::style configure TProgressbar -background $color
+  ttk::frame .f
+  ttk::label .label -textvariable tPMG::dialog::text
+  ttk::progressbar .progress -mode $type -maximum $max -value $value \
+    -variable tPMG::dialog::value
+  ttk::button .ok -text "OK" -state disabled \
+    -command {set tPMG::dialog::response "ok"}
+  ttk::button .cancel -text "Cancel" \
+    -command {set tPMG::dialog::response $tPMG::Cancel}
+  pack .label .progress -in .f -fill x
+  pack .f -padx 5 -pady 5 -fill x
+  pack .ok .cancel -padx 10 -pady 10 -side left
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  wm title     . $title
+  wm resizable . 0 0
+  # call read from pipe - bar update coroutine
+  coroutine updateProgress tPMG::dialog::readPipe $auto
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
+# HELP SYSTEM
+#
+proc tPMG::Help {{args ""} {out "stdout"}} {
+  switch -- $args {
+    all {
+      set all [info vars ::tPMG::help::*]
+      foreach help $all {puts [subst $[subst $help]]}
+      exit 0
+    }
+    color       {set help $tPMG::help::Color}
+    dir         {set help $tPMG::help::Directory}
+    directory   {set help $tPMG::help::Directory}
+    fileselect  {set help $tPMG::help::FileSelect}
+    filesave    {set help $tPMG::help::FileSave}
+    info        {set help $tPMG::help::Information}
+    information {set help $tPMG::help::Information}
+    password    {set help $tPMG::help::Password}
+    entry       {set help $tPMG::help::Entry}
+    scale       {set help $tPMG::help::Scale}
+    text        {set help $tPMG::help::Text}
+    list        {set help $tPMG::help::List}
+    progress    {set help $tPMG::help::Progress}
+    ""          {set help $tPMG::helpBasic}
+    default     {
+      puts stderr "unknown help option: $args"
+      puts stderr $tPMG::helpBasic
+      exit 255
+    }
+  }
+  puts $out $help
+}
+
+################################################################################
+# ARGUMENT PARSING
+#
+proc tPMG::Argv {} {
+  set value 0
+  if {$::argc == 0} {
+    tPMG::Help {} stderr
+    exit 255
+  }
+  foreach option $::argv {
+    set optidx [lsearch -exact $::argv $option]
+    set args [lrange $::argv [expr {$optidx + 1}] end]
+    switch -- $option {
+      --color {
+        set tPMG::Cmd [list tPMG::dialog::Color $args]
+        return 0
+      }
+      --dir {
+        set tPMG::Cmd [list tPMG::dialog::Directory $args]
+        return 0
+      }
+      --directory {
+        set tPMG::Cmd [list tPMG::dialog::Directory $args]
+        return 0
+      }
+      --fileselect {
+        set tPMG::Cmd [list tPMG::dialog::FileSelect $args]
+        return 0
+      }
+      --filesave {
+        set tPMG::Cmd [list tPMG::dialog::FileSave $args]
+        return 0
+      }
+      --info {
+        set tPMG::Cmd [list tPMG::dialog::Information $args]
+        return 0
+      }
+      --information {
+        set tPMG::Cmd [list tPMG::dialog::Information $args]
+        return 0
+      }
+      --password {
+        set tPMG::Cmd [list tPMG::dialog::Password $args]
+        return 0
+      }
+      --entry {
+        set tPMG::Cmd [list tPMG::dialog::Entry $args]
+        return 0
+      }
+      --scale {
+        set tPMG::Cmd [list tPMG::dialog::Scale $args]
+        return 0
+      }
+      --text {
+        set tPMG::Cmd [list tPMG::dialog::Text $args]
+        return 0
+      }
+      --list {
+        set tPMG::Cmd [list tPMG::dialog::List $args]
+        return 0
+      }
+      --progress {
+        set tPMG::Cmd [list tPMG::dialog::Progress $args]
+        return 0
+      }
+      --calendar {
+        puts "calendar is not implemented yet"
+        exit 0
+      }
+      --help {
+        tPMG::Help $args
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help {} stderr
+        exit 255
+      }
+    }
+  }
+}
+
+################################################################################
+# MAIN PROGRAM
+#
+bind all <KP_Enter> {event generate %W <Return>}
+wm protocol . WM_DELETE_WINDOW {exit 1}
+tPMG::Argv
+set tPMG::cmdReturn [{*}$tPMG::Cmd]
+if {$tPMG::cmdReturn eq $tPMG::Error} {
+  exit 255
+} elseif {$tPMG::cmdReturn eq $tPMG::Cancel} {
+  exit 1
+} else {
+  foreach line $tPMG::cmdReturn {
+    puts $line
+  }
+  exit 0
+}
