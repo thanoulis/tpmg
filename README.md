@@ -1,18 +1,18 @@
 **tpmg** is a 'Poor Mans's GUI' much like [zenity](https://gitlab.gnome.org/GNOME/zenity) or [qarma](https://github.com/luebking/qarma) written in core [Tcl/Tk](https://www.tcl.tk).
 
 ### Dialogs
-* [Color](#Color-dialog "Color")
-* [Directory](#Directory-dialog "Directory")
-* [FileSelect](#FileSelect-dialog "FileSelect")
-* [FileSave](#FileSave-dialog "FileSave")
-* [Information](#Information-dialog "Information")
-* [Password](#Password-dialog "Password")
-* [Entry](#Entry-dialog "Entry")
-* [Scale](#Scale-dialog "Scale")
-* [List](#List-dialog "List")
-* [Progress](#Progress-dialog "Progress")
+* [Color](#color-dialog "Color")
+* [Directory](#directory-dialog "Directory")
+* [FileSelect](#fileselect-dialog "FileSelect")
+* [FileSave](#filesave-dialog "FileSave")
+* [Information](#information-dialog "Information")
+* [Password](#password-dialog "Password")
+* [Entry](#entry-dialog "Entry")
+* [Scale](#scale-dialog "Scale")
+* [List](#list-dialog "List")
+* [Progress](#progress-dialog "Progress")
 
-##### Color dialog
+#### Color dialog
 * options:
   | option   | type     | description       | default           |
   |:--------:|:--------:|:-----------------:|:-----------------:|
@@ -28,7 +28,7 @@
 * screenshot:  
 ![ColorDialog](screenshots/ColorDialog.png "ColorDialog")
 
-##### Directory dialog
+#### Directory dialog
 * options:
   | option   | type   | description          | default              |
   |:--------:|:------:|:--------------------:|:--------------------:|
@@ -44,7 +44,7 @@
 * screenshot:  
 ![DirectoryDialog](screenshots/DirectoryDialog.png "DirectoryDialog")
 
-##### FileSelect dialog
+#### FileSelect dialog
 * options:
   | option    | type   | description           | default        |
   |:---------:|:------:|:---------------------:|:--------------:|
@@ -60,7 +60,7 @@
 * screenshot:  
 ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
 
-##### FileSave dialog
+#### FileSave dialog
 * options:
   | option       | type   | description                 | default       |
   |:------------:|:------:|:---------------------------:|:-------------:|
@@ -77,7 +77,7 @@
 * screenshot:  
 ![FileSaveDialog](screenshots/FileSaveDialog.png "FileSaveDialog")
 
-##### Information dialog
+#### Information dialog
 * options:
   | option          | type               | description                 | default |
   |:---------------:|:------------------:|:---------------------------:|:-------:|
@@ -96,7 +96,7 @@
 * screenshot:  
 ![InformationDialog](screenshots/InformationDialog.png "InformationDialog")
 
-##### Password dialog
+#### Password dialog
 * options:
   | option        | type   | description                 | default      |
   |:-------------:|:------:|:---------------------------:|:------------:|
@@ -112,7 +112,7 @@
 * screenshot:  
 ![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
 
-##### Entry dialog
+#### Entry dialog
 * options:
   | option        | type   | description      | default             |
   |:-------------:|:------:|:----------------:|:-------------------:|
@@ -128,7 +128,7 @@
 * screenshot:  
 ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
 
-##### Text dialog
+#### Text dialog
 * options:
   | option          | type   | description       | default       |
   |:---------------:|:------:|:-----------------:|:-------------:|
@@ -148,7 +148,7 @@
 * screenshot:  
 ![TextDialog](screenshots/TextDialog.png "TextDialog")
 
-##### Scale dialog
+#### Scale dialog
 * options:
   | option   | type    | description       | default               |
   |:--------:|:-------:|:-----------------:|:---------------------:|
@@ -167,7 +167,7 @@
 * screenshot:  
 ![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
 
-##### List dialog
+#### List dialog
 * options:
   | option     | type         | description       | default              |
   |:----------:|:------------:|:-----------------:|:--------------------:|
@@ -188,7 +188,7 @@
 * screenshot:  
 ![ListDialog](screenshots/ListDialog.png "ListDialog")
 
-##### Progress dialog
+#### Progress dialog
 * description:  
 **Progress** dialog reads data from **stdin** line by line.
 Lines must be prefixed with `tpmg:`. All other lines are ignored.
@@ -222,7 +222,7 @@ echo "tpmg:100"; echo "tpmg:Done."
 ```
 * screenshot:  
 ![ProgressDialog](screenshots/ProgressDialog.png "ProgressDialog")
-* bugs: wrong behavior on pulsing progress bar (not critical though)
+* bugs: wrong behavior on pulsating progress bar (not critical though)
 
 ### Dependencies
 * **Tcl** version 8.6 or later.
