@@ -1,6 +1,10 @@
 #!/usr/bin/env tclsh
 
 package require Tk
+# force utf-8 on windows wrapped exe (freewrap workaround)
+if {$::tcl_platform(platform) eq "windows" && [encoding system] ne "utf-8" } {
+  encoding system utf-8
+}
 
 ################################################################################
 # VARIABLES
