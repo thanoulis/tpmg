@@ -120,11 +120,11 @@
   | --text=       | string | set label text   | "Enter text below:" |
   | --help        |        | this help        |
 * returns:
-  | OK      | Cancel | Error |
-  |:-------:|:------:|:-----:|
-  | *entry* | 1      | 255   |
+  | OK              | Cancel | Error |
+  |:---------------:|:------:|:-----:|
+  | *entries' list* | 1      | 255   |
 * example:  
-`tpmg --entry --title="Search terms" --text="Search for:"`
+`tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:"`
 * screenshot:  
 ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
 
