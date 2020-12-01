@@ -13,6 +13,8 @@
 * [Progress](#progress-dialog "Progress")
 
 #### Color dialog
+* description:<br/>
+  Displays a color selection dialog. Its appearance depends on platform.
 * options:
   | option   | type     | description       | default           |
   |----------|:--------:|-------------------|:-----------------:|
@@ -23,14 +25,16 @@
   | OK    | Cancel | Error |
   |:-----:|:------:|:-----:|
   | color | 1      | 255   |
-* example:  
-```shell
-tpmg --color --title="Choose Color" --color="#eed421"
-```
-* screenshot:  
-![ColorDialog](screenshots/ColorDialog.png "ColorDialog")
+* example:
+  ```shell
+  tpmg --color --title="Choose Color" --color="#eed421"
+  ```
+* screenshot:<br/>
+  ![ColorDialog](screenshots/ColorDialog.png "ColorDialog")
 
 #### Directory dialog
+* description:<br/>
+  Display a directory select dialog. Its appearance depends on platform.
 * options:
   | option   | type   | description          | default              |
   |----------|:------:|----------------------|:--------------------:|
@@ -41,14 +45,16 @@ tpmg --color --title="Choose Color" --color="#eed421"
   | OK        | Cancel | Error |
   |:---------:|:------:|:-----:|
   | directory | 1      | 255   |
-* example:  
-```shell
-tpmg --directory --title="Select a Directory" --exist
-```
-* screenshot:  
-![DirectoryDialog](screenshots/DirectoryDialog.png "DirectoryDialog")
+* example:
+  ```shell
+  tpmg --directory --title="Select a Directory" --exist
+  ```
+* screenshot:<br/>
+  ![DirectoryDialog](screenshots/DirectoryDialog.png "DirectoryDialog")
 
 #### FileSelect dialog
+* description:<br/>
+  Display a file selection dialog. Its appearance depends on platform.
 * options:
   | option    | type   | description           | default        |
   |-----------|:------:|-----------------------|:--------------:|
@@ -60,14 +66,16 @@ tpmg --directory --title="Select a Directory" --exist
   | OK        | Cancel | Error |
   |:---------:|:------:|:-----:|
   | file list | 1      | 255   |
-* example:  
-```shell
-tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
-```
-* screenshot:  
-![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
+* example:
+  ```shell
+  tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
+  ```
+* screenshot:<br/>
+  ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
 
 #### FileSave dialog
+* description:<br/>
+  Display a file save dialog. Its appearance depends on platform.
 * options:
   | option       | type   | description                 | default           |
   |--------------|:------:|-----------------------------|:-----------------:|
@@ -80,14 +88,19 @@ tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
   | OK        | Cancel | Error |
   |:---------:|:------:|:-----:|
   | file path | 1      | 255   |
-* example:  
-```shell
-tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
-```
-* screenshot:  
-![FileSaveDialog](screenshots/FileSaveDialog.png "FileSaveDialog")
+* example:
+  ```shell
+  tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
+  ```
+* screenshot:<br/>
+  ![FileSaveDialog](screenshots/FileSaveDialog.png "FileSaveDialog")
 
 #### Information dialog
+* description:<br/>
+  Display an information dialog. Supports icons for info, error, question and warning.<br/>
+  Can have a combination of buttons, as okcancel, yesno, retrycancel, etc.<br/>
+  Main message is bold and equals to the first non option string.<br/>
+  All other strings are message details, with every string represent a line.
 * options:
   | option       | type               | description                 | default |
   |--------------|:------------------:|-----------------------------|:-------:|
@@ -97,18 +110,18 @@ tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
   | first string | string             | main message (in bold)      |
   | other string | string             | message details             |  
   | --help       |                    | this help                   |
->1: info error question warning  
+>1: info error question warning<br/>
 >2: ok okcancel yesno yesnocancel retrycancel abortretryignore
-* returns:  
+* returns:<br/>
   the button<sup>2</sup> name
-* example:  
-```shell
-tpmg --information --title="Are you sure?" --icon="question" \
-  --button="yesnocancel" "All data will be wiped!" \
-  "This action cannot be undone." "Proceed?"
-```
-* screenshot:  
-![InformationDialog](screenshots/InformationDialog.png "InformationDialog")
+* example:
+  ```shell
+  tpmg --information --title="Are you sure?" --icon="question" \
+    --button="yesnocancel" "All data will be wiped!" \
+    "This action cannot be undone." "Proceed?"
+  ```
+* screenshot:<br/>
+  ![InformationDialog](screenshots/InformationDialog.png "InformationDialog")
 
 #### Password dialog
 * options:
