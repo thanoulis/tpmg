@@ -15,7 +15,7 @@
 #### Color dialog
 * options:
   | option   | type     | description       | default           |
-  |:--------:|:--------:|:-----------------:|:-----------------:|
+  |----------|:--------:|-------------------|:-----------------:|
   | --title= | string   | set window title  | "Select a Color"  |
   | --color= | hexcolor | set initial color | "#d9d9d9"         |
   | --help   |          | this help         |
@@ -33,7 +33,7 @@ tpmg --color --title="Choose Color" --color="#eed421"
 #### Directory dialog
 * options:
   | option   | type   | description          | default              |
-  |:--------:|:------:|:--------------------:|:--------------------:|
+  |----------|:------:|----------------------|:--------------------:|
   | --title= | string | set window title     | "Select a Directory" |
   | --exist  |        | directory must exist |
   | --help   |        | this help            |
@@ -51,7 +51,7 @@ tpmg --directory --title="Select a Directory" --exist
 #### FileSelect dialog
 * options:
   | option    | type   | description           | default        |
-  |:---------:|:------:|:---------------------:|:--------------:|
+  |-----------|:------:|-----------------------|:--------------:|
   | --title=  | string | set window title      | "Select Files" |
   | --ext=    | csv    | set filetype filter   | show all files |
   | --single  |        | single file selection |
@@ -59,7 +59,7 @@ tpmg --directory --title="Select a Directory" --exist
 * returns:
   | OK           | Cancel | Error |
   |:------------:|:------:|:-----:|
-  | *files path* | 1      | 255   |
+  | *files list* | 1      | 255   |
 * example:  
 ```shell
 tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
@@ -70,7 +70,7 @@ tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
 #### FileSave dialog
 * options:
   | option       | type   | description                 | default           |
-  |:------------:|:------:|:---------------------------:|:-----------------:|
+  |--------------|:------:|-----------------------------|:-----------------:|
   | --title=     | string | set window title            | "Save File"       |
   | --ext=       | csv    | set filetype filter         | show all files    |
   | --file=      | path   | set initial file            |
@@ -90,7 +90,7 @@ tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
 #### Information dialog
 * options:
   | option          | type               | description                 | default |
-  |:---------------:|:------------------:|:---------------------------:|:-------:|
+  |-----------------|:------------------:|-----------------------------|:-------:|
   | --title=        | string             | set window title            |
   | --icon=         | icon<sup>1</sup>   | icon to use in dialog       | info    |
   | --button=       | button<sup>2</sup> | buttons to use in dialog    | ok      |
@@ -113,7 +113,7 @@ tpmg --information --title="Are you sure?" --icon="question" \
 #### Password dialog
 * options:
   | option        | type   | description                 | default      |
-  |:-------------:|:------:|:---------------------------:|:------------:|
+  |---------------|:------:|-----------------------------|:------------:|
   | --title=      | string | set window title            | "Login As"   |
   | --nousername  |        | hide the "Username" entry   |
   | --help        |        | this help                   |
@@ -131,7 +131,7 @@ tpmg --password --title="Welcome $USER" --nousername
 #### Entry dialog
 * options:
   | option        | type   | description      | default             |
-  |:-------------:|:------:|:----------------:|:-------------------:|
+  |---------------|:------:|------------------|:-------------------:|
   | --title=      | string | set window title | "Enter Text"        |
   | --text=       | string | set label text   | "Enter text below:" |
   | --help        |        | this help        |
@@ -150,7 +150,7 @@ tpmg --entry --title="Personal Information" \
 #### Text dialog
 * options:
   | option          | type   | description       | default       |
-  |:---------------:|:------:|:-----------------:|:-------------:|
+  |-----------------|:------:|-------------------|:-------------:|
   | --title=        | string | set window title  | "Show Text"   |
   | --file=         | path   | text file to show |
   | --edit          |        | can edit text     | cannot edit   |
@@ -173,7 +173,7 @@ tpmg --text --title="README" --file="~/README.txt" \
 #### Scale dialog
 * options:
   | option   | type    | description       | default               |
-  |:--------:|:-------:|:-----------------:|:---------------------:|
+  |----------|:-------:|-------------------|:---------------------:|
   | --title= | string  | set window title  | "Adjust Value"        |
   | --text=  | string  | set label text    | "Adjust value below:" |
   | --min=   | integer | set min value     | 0                     |
@@ -196,7 +196,7 @@ tpmg --scale --title="Adjust Transparency" \
 #### List dialog
 * options:
   | option     | type         | description       | default              |
-  |:----------:|:------------:|:-----------------:|:--------------------:|
+  |------------|:------------:|-------------------|:--------------------:|
   | --title=   | string       | set window title  | "Set Options"        |
   | --text=    | string       | set label text    | "Set options below:" |
   | --type=    | check\|radio | set list type     | check                |
@@ -226,7 +226,7 @@ If the rest are only numbers, the progress bar advances to that number.
 Else, it updates the label text.
 * options:
   | option   | type     | description                | default         |
-  | -------- |:--------:| -------------------------- |:---------------:|
+  |----------|:--------:|----------------------------|:---------------:|
   | --title= | string   | set window title           | "Show Progress" |
   | --text=  | string   | set label text             |
   | --color= | hexcolor | set progress bar color     | Tk default      |
