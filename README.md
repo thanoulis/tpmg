@@ -14,7 +14,7 @@
 
 #### Color dialog
 * description:<br/>
-  Displays a color selection dialog. Its appearance depends on platform.
+  Displays a color selection dialog. Appearance depends on platform.
 * options:
   | option   | type     | description       | default           |
   |----------|:--------:|-------------------|:-----------------:|
@@ -34,7 +34,7 @@
 
 #### Directory dialog
 * description:<br/>
-  Display a directory select dialog. Its appearance depends on platform.
+  Display a directory select dialog. Appearance depends on platform.
 * options:
   | option   | type   | description          | default              |
   |----------|:------:|----------------------|:--------------------:|
@@ -54,7 +54,7 @@
 
 #### FileSelect dialog
 * description:<br/>
-  Display a file selection dialog. Its appearance depends on platform.
+  Display a file selection dialog. Appearance depends on platform.
 * options:
   | option    | type   | description           | default        |
   |-----------|:------:|-----------------------|:--------------:|
@@ -75,7 +75,7 @@
 
 #### FileSave dialog
 * description:<br/>
-  Display a file save dialog. Its appearance depends on platform.
+  Display a file save dialog. Appearance depends on platform.
 * options:
   | option       | type   | description                 | default           |
   |--------------|:------:|-----------------------------|:-----------------:|
@@ -171,7 +171,7 @@
 * description:<br/>
   Display a text information dialog.<br/>
   Text can be from file, from command line in the form of every string is a new line and from standard input.<br/>
-  In case of multiple inputs, **Text** will concatenate the result, with `file`->`string`->`stdin` hierarchy.
+  In case of multiple inputs, will concatenate the text, with `file`->`string`->`stdin` hierarchy.
 * options:
   | option        | type   | description       | default       |
   |---------------|:------:|-------------------|:-------------:|
@@ -253,7 +253,7 @@
   Display a progress bar dialog.<br/>
   **Progress** dialog reads data from `stdin` line by line.<br/>
   Lines must be prefixed with `tpmg:`, or are ignored.<br/>
-  If text consists of only numbers, the progress bar advances to that number.<br/>
+  If text is a number, the progress bar advances to that number.<br/>
   Else, it updates the label text.
 * options:
   | option   | type     | description                | default         |
@@ -284,7 +284,7 @@
 * screenshot:<br/>
   ![ProgressDialog](screenshots/ProgressDialog.png "ProgressDialog")
 * bugs:<br/>
-  wrong behavior on pulsating progress bar (not critical though)
+  Wrong behavior on pulsating progress bar (not critical).
 
 
 ### Dependencies
