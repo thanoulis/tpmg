@@ -71,20 +71,22 @@ example: tpmg --directory --title="Select a Directory" --exist
 }
     variable FileSelect {
 options for Files Select dialog:
-  --title="string" set window title [default: "Select Files"]
-  --single         single selection [no default]
+  --title="string" set window title    [default: "Select Files"]
+  --ext="csv"      set filetype filter [default: show all files]
+  --single         single selection    [no default]
   --help           this help
 
 returns: file path on 'Open', 1 on 'Cancel', 255 on error
   on multiple selection, returns list
 
-example: tpmg --fileselect --title="Select a File" --single
+example: tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
 }
     variable FileSave {
 options for File Save dialog:
   --title="string"  set window title            [default: "Save File"]
+  --ext="csv"       set filetype filter         [default: show all files]
   --file="filepath" set initial file            [no default]
-  --noconfirm       do not confirm on overwrite [no default]
+  --noconfirm       do not confirm on overwrite [default: confirm overwrite]
   --help            this help
 
 returns: file path on 'Save', 1 on 'Cancel', 255 on error
@@ -98,10 +100,8 @@ options for Information dialog:
                       icon to use in dialog    [default: "info"]
   --button="one of: ok,okcancel,yesno,yesnocancel,retrycancel,abortretryignore"
                       buttons to use in dialog [default: "ok"]
-  "first non option string"
-                      main message (bold)
-  "all" "other" "strings"
-                      message details (every string in a new line)
+  "first string"      main message (bold)
+  "other" "strings"   message details (every string in a new line)
   --help              this help
 
 returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
@@ -147,7 +147,7 @@ options for Text dialog:
   --title="string"  set window title [default: "Show Text"]
   --file="filepath" file to show     [no default]
   --edit            can edit text    [default: cannot edit]
-  --font="{font name} size bold/italic/underline/overstrike"
+  --font="{font name} size bold|italic|underline|overstrike"
                     font to use      [default: "TkFixedFont"]
   "other" "non option" "strings"
                     text body (every string in a new line)
@@ -283,12 +283,19 @@ proc tPMG::dialog::Directory {args} {
 # FILE SELECT DIALOG
 #
 proc tPMG::dialog::FileSelect {args} {
-  set title  "Select Files"
-  set single "true"
+  set title     "Select Files"
+  set filetypes ""
+  set single    "true"
   foreach option {*}$args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
+      }
+      --ext=* {
+        set extlist [split [string range $option 6 end] ","]
+        foreach ext $extlist {
+          lappend filetypes [list [string toupper $ext] $ext]
+        }
       }
       --single {
         set single "false"
@@ -305,8 +312,8 @@ proc tPMG::dialog::FileSelect {args} {
     }
   }
   wm withdraw .
-  set response [file nativename [tk_getOpenFile \
-    -title $title -multiple $single]]
+  set response [file nativename [tk_getOpenFile -title $title \
+    -filetypes $filetypes -multiple $single]]
   if {$response eq ""} {return $tPMG::Cancel}
   return $response
 }
@@ -315,13 +322,20 @@ proc tPMG::dialog::FileSelect {args} {
 # FILE SAVE DIALOG
 #
 proc tPMG::dialog::FileSave {args} {
-  set title   "Save File"
-  set confirm "true"
-  set file    ""
+  set title     "Save File"
+  set filetypes ""
+  set file      ""
+  set confirm   "true"
   foreach option {*}$args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
+      }
+      --ext=* {
+        set extlist [split [string range $option 6 end] ","]
+        foreach ext $extlist {
+          lappend filetypes [list [string toupper $ext] $ext]
+        }
       }
       --file=* {
         set file [file nativename [string range $option 7 end]]
@@ -341,8 +355,8 @@ proc tPMG::dialog::FileSave {args} {
     }
   }
   wm withdraw .
-  set response [file nativename [tk_getSaveFile \
-    -title $title -confirmoverwrite $confirm -initialfile $file]]
+  set response [file nativename [tk_getSaveFile -title $title \
+    -filetypes $filetypes -confirmoverwrite $confirm -initialfile $file]]
   if {$response eq ""} {return $tPMG::Cancel}
   return $response
 }
