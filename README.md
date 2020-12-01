@@ -24,7 +24,9 @@
   |:-------:|:------:|:-----:|
   | *color* | 1      | 255   |
 * example:  
-  `tpmg --color --title="Choose Color" --color="#eed421"`
+```shell
+tpmg --color --title="Choose Color" --color="#eed421"
+```
 * screenshot:  
 ![ColorDialog](screenshots/ColorDialog.png "ColorDialog")
 
@@ -40,7 +42,9 @@
   |:----------------:|:------:|:-----:|
   | *directory path* | 1      | 255   |
 * example:  
-`tpmg --directory --title="Select a Directory" --exist`
+```shell
+tpmg --directory --title="Select a Directory" --exist
+```
 * screenshot:  
 ![DirectoryDialog](screenshots/DirectoryDialog.png "DirectoryDialog")
 
@@ -57,7 +61,9 @@
   |:------------:|:------:|:-----:|
   | *files path* | 1      | 255   |
 * example:  
-`tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single`
+```shell
+tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
+```
 * screenshot:  
 ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
 
@@ -75,7 +81,9 @@
   |:-----------:|:------:|:-----:|
   | *file path* | 1      | 255   |
 * example:  
-`tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm`
+```shell
+tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
+```
 * screenshot:  
 ![FileSaveDialog](screenshots/FileSaveDialog.png "FileSaveDialog")
 
@@ -94,7 +102,11 @@
 * returns:  
   the button<sup>2</sup> name
 * example:  
-`tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"`
+```shell
+tpmg --information --title="Are you sure?" --icon="question" \
+  --button="yesnocancel" "All data will be wiped!" \
+  "This action cannot be undone." "Proceed?"
+```
 * screenshot:  
 ![InformationDialog](screenshots/InformationDialog.png "InformationDialog")
 
@@ -110,7 +122,9 @@
   |:---------------------:|:------:|:-----:|
   | *username* *password* | 1      | 255   |
 * example:  
-`tpmg --password --title="Welcome $USER" --nousername`
+```shell
+tpmg --password --title="Welcome $USER" --nousername
+```
 * screenshot:  
 ![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
 
@@ -126,7 +140,10 @@
   |:---------------:|:------:|:-----:|
   | *entries' list* | 1      | 255   |
 * example:  
-`tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:"`
+```shell
+tpmg --entry --title="Personal Information" \
+  --text="First name:,Last name:,email:"
+```
 * screenshot:  
 ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
 
@@ -146,7 +163,10 @@
   |:--:|:------:|:-----:|
   | ok | 1      | 255   |
 * example:  
-`tpmg --text --title="README" --file="~/README.txt" --edit --font="{DejaVu Sans Mono} 12 bold"`
+```shell
+tpmg --text --title="README" --file="~/README.txt" \
+  --edit --font="{DejaVu Sans Mono} 12 bold"
+```
 * screenshot:  
 ![TextDialog](screenshots/TextDialog.png "TextDialog")
 
@@ -165,7 +185,11 @@
   |:-------:|:------:|:-----:|
   | *scale* | 1      | 255   |
 * example:  
-`tpmg --scale --title="Adjust Transparency" --text="Choose window transparency:" --min="0" --max="100" --value="20"`
+```shell
+tpmg --scale --title="Adjust Transparency" \
+  --text="Choose window transparency:" \
+  --min="0" --max="100" --value="20"
+```
 * screenshot:  
 ![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
 
@@ -202,7 +226,7 @@ If the rest are only numbers, the progress bar advances to that number.
 Else, it updates the label text.
 * options:
   | option   | type     | description                | default         |
-  |:--------:|:--------:|:--------------------------:|:---------------:|
+  | -------- |:--------:| -------------------------- |:---------------:|
   | --title= | string   | set window title           | "Show Progress" |
   | --text=  | string   | set label text             |
   | --color= | hexcolor | set progress bar color     | Tk default      |
