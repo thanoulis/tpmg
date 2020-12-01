@@ -122,12 +122,12 @@ example: tpmg --password --title="Welcome $USER" --nousername
     variable Entry {
 options for Entry dialog:
   --title="string" set window title [default: "Enter Text"]
-  --text="string"  set label text   [default: "Enter text below:"]
+  --text="csv"     set label text   [default: "Enter text below:"]
   --help           this help
 
-returns: entry string on 'OK', 1 on 'Cancel', 255 on error
+returns: entries' list on 'OK', 1 on 'Cancel', 255 on error
 
-example: tpmg --entry --title="Search terms" --text="Search for:"
+example: tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:"
 }
     variable Scale {
 options for Scale dialog:
@@ -165,9 +165,8 @@ options for List dialog:
   --title="string"      set window title    [default: "Set Options"]
   --text="string"       set label text      [default: "Set options below:"]
   --type="radio|check"  set list type       [default: "check"]
-  --options="comma separated list"
-                        set options list    [no default]
-  --default="radio:string|check:comma separated list"
+  --options="csv"       set options list    [no default]
+  --default="radio:string|check:csv"
       for radiolist:    default radio value [no default]
       for checklist:    set <option> "true" [no default]
   --anchor="w|e|c"      placement in window [default: "w"]
@@ -481,14 +480,15 @@ proc tPMG::dialog::Password {args} {
 #
 proc tPMG::dialog::Entry {args} {
   set title "Enter Text"
-  set text  "Enter text below:"
+  set text  [list "Enter text below:"]
   foreach option {*}$args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
       }
       --text=*  {
-        set text [string range $option 7 end]
+        set text [split [string range $option 7 end] ","]
+        set tPMG::dialog::value [llength $text]
       }
       --help {
         tPMG::Help "entry"
@@ -501,22 +501,32 @@ proc tPMG::dialog::Entry {args} {
       }
     }
   }
-  ttk::labelframe .fentry -relief flat -text $text
-  ttk::entry .entry -textvariable tPMG::dialog::text
+  set i 0
+  foreach item $text {
+    set tPMG::dialog::list($i) ""
+    set entry [string cat "." $i]
+    set frame [string cat $entry "frame"]
+    ttk::labelframe $frame -relief flat -text $item
+    ttk::entry $entry -textvariable tPMG::dialog::list($i)
+    pack $entry -in $frame
+    pack $frame -pady 5
+    incr i
+  }
   ttk::button .ok -text "OK" -command {
-    set tPMG::dialog::response $tPMG::dialog::text
+    for {set i 0} {$i <= $tPMG::dialog::value} {incr i} {
+      lappend tPMG::dialog::response $tPMG::dialog::list($i)
+    }
   }
   ttk::button .cancel -text "Cancel" -command {
     set tPMG::dialog::response $tPMG::Cancel
   }
-  pack .entry -in .fentry
-  pack .fentry -pady 5
   pack .ok .cancel -padx 10 -pady 5 -side left
   bind all <Return> {.ok invoke}
   bind all <Escape> {.cancel invoke}
   wm title     . $title
   wm resizable . 0 0
-  focus .entry
+  # focus first entry
+  focus .0
   vwait tPMG::dialog::response
   return $tPMG::dialog::response
 }
