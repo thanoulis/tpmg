@@ -49,6 +49,7 @@
   | option    | type   | description           | default        |
   |:---------:|:------:|:---------------------:|:--------------:|
   | --title=  | string | set window title      | "Select Files" |
+  | --ext=    | csv    | set filetype filter   | show all files |
   | --single  |        | single file selection |
   | --help    |        | this help             |
 * returns:
@@ -56,17 +57,18 @@
   |:------------:|:------:|:-----:|
   | *files path* | 1      | 255   |
 * example:  
-`tpmg --fileselect --title="Select a File" --single`
+`tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single`
 * screenshot:  
 ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
 
 #### FileSave dialog
 * options:
-  | option       | type   | description                 | default       |
-  |:------------:|:------:|:---------------------------:|:-------------:|
-  | --title=     | string | set window title            | "Save File"   |
+  | option       | type   | description                 | default           |
+  |:------------:|:------:|:---------------------------:|:-----------------:|
+  | --title=     | string | set window title            | "Save File"       |
+  | --ext=       | csv    | set filetype filter         | show all files    |
   | --file=      | path   | set initial file            |
-  | --noconfirm  |        | do not confirm on overwrite |
+  | --noconfirm  |        | do not confirm on overwrite | confirm overwrite |
   | --help       |        | this help                   |
 * returns:
   | OK          | Cancel | Error |
