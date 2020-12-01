@@ -20,9 +20,9 @@
   | --color= | hexcolor | set initial color | "#d9d9d9"         |
   | --help   |          | this help         |
 * returns:
-  | OK      | Cancel | Error |
-  |:-------:|:------:|:-----:|
-  | *color* | 1      | 255   |
+  | OK    | Cancel | Error |
+  |:-----:|:------:|:-----:|
+  | color | 1      | 255   |
 * example:  
 ```shell
 tpmg --color --title="Choose Color" --color="#eed421"
@@ -38,9 +38,9 @@ tpmg --color --title="Choose Color" --color="#eed421"
   | --exist  |        | directory must exist |
   | --help   |        | this help            |
 * returns:
-  | OK               | Cancel | Error |
-  |:----------------:|:------:|:-----:|
-  | *directory path* | 1      | 255   |
+  | OK        | Cancel | Error |
+  |:---------:|:------:|:-----:|
+  | directory | 1      | 255   |
 * example:  
 ```shell
 tpmg --directory --title="Select a Directory" --exist
@@ -57,9 +57,9 @@ tpmg --directory --title="Select a Directory" --exist
   | --single  |        | single file selection |
   | --help    |        | this help             |
 * returns:
-  | OK           | Cancel | Error |
-  |:------------:|:------:|:-----:|
-  | *files list* | 1      | 255   |
+  | OK        | Cancel | Error |
+  |:---------:|:------:|:-----:|
+  | file list | 1      | 255   |
 * example:  
 ```shell
 tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
@@ -77,9 +77,9 @@ tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
   | --noconfirm  |        | do not confirm on overwrite | confirm overwrite |
   | --help       |        | this help                   |
 * returns:
-  | OK          | Cancel | Error |
-  |:-----------:|:------:|:-----:|
-  | *file path* | 1      | 255   |
+  | OK        | Cancel | Error |
+  |:---------:|:------:|:-----:|
+  | file path | 1      | 255   |
 * example:  
 ```shell
 tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
@@ -89,14 +89,14 @@ tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
 
 #### Information dialog
 * options:
-  | option          | type               | description                 | default |
-  |-----------------|:------------------:|-----------------------------|:-------:|
-  | --title=        | string             | set window title            |
-  | --icon=         | icon<sup>1</sup>   | icon to use in dialog       | info    |
-  | --button=       | button<sup>2</sup> | buttons to use in dialog    | ok      |
-  | *first string*  | string             | main message (in bold)      |
-  | *other string*  | string             | message details             |  
-  | --help          |                    | this help                   |
+  | option       | type               | description                 | default |
+  |--------------|:------------------:|-----------------------------|:-------:|
+  | --title=     | string             | set window title            |
+  | --icon=      | icon<sup>1</sup>   | icon to use in dialog       | info    |
+  | --button=    | button<sup>2</sup> | buttons to use in dialog    | ok      |
+  | first string | string             | main message (in bold)      |
+  | other string | string             | message details             |  
+  | --help       |                    | this help                   |
 >1: info error question warning  
 >2: ok okcancel yesno yesnocancel retrycancel abortretryignore
 * returns:  
@@ -120,7 +120,7 @@ tpmg --information --title="Are you sure?" --icon="question" \
 * returns:
   | OK                    | Cancel | Error |
   |:---------------------:|:------:|:-----:|
-  | *username* *password* | 1      | 255   |
+  | username<br/>password | 1      | 255   |
 * example:  
 ```shell
 tpmg --password --title="Welcome $USER" --nousername
@@ -136,9 +136,9 @@ tpmg --password --title="Welcome $USER" --nousername
   | --text=       | string | set label text   | "Enter text below:" |
   | --help        |        | this help        |
 * returns:
-  | OK              | Cancel | Error |
-  |:---------------:|:------:|:-----:|
-  | *entries' list* | 1      | 255   |
+  | OK         | Cancel | Error |
+  |:----------:|:------:|:-----:|
+  | entry list | 1      | 255   |
 * example:  
 ```shell
 tpmg --entry --title="Personal Information" \
@@ -149,14 +149,14 @@ tpmg --entry --title="Personal Information" \
 
 #### Text dialog
 * options:
-  | option          | type   | description       | default       |
-  |-----------------|:------:|-------------------|:-------------:|
-  | --title=        | string | set window title  | "Show Text"   |
-  | --file=         | path   | text file to show |
-  | --edit          |        | can edit text     | cannot edit   |
-  | --font=         | font   | font to use       | "TkFixedFont" |
-  | *other strings* | string | text body (every string is a new line) |  
-  | --help          |        | this help         |
+  | option        | type   | description       | default       |
+  |---------------|:------:|-------------------|:-------------:|
+  | --title=      | string | set window title  | "Show Text"   |
+  | --file=       | path   | text file to show |
+  | --edit        |        | can edit text     | cannot edit   |
+  | --font=       | font   | font to use       | "TkFixedFont" |
+  | other strings | string | text body (every string is a new line) |  
+  | --help        |        | this help         |
 >In case of multiple inputs, **Text** will concatenate the result, with hierarchy: file string stdin
 * returns:  
   | OK | Cancel | Error |
@@ -181,9 +181,9 @@ tpmg --text --title="README" --file="~/README.txt" \
   | --value= | integer | set initial value | 0                     |
   | --help   |         | this help         |
 * returns:  
-  | OK      | Cancel | Error |
-  |:-------:|:------:|:-----:|
-  | *scale* | 1      | 255   |
+  | OK    | Cancel | Error |
+  |:-----:|:------:|:-----:|
+  | scale | 1      | 255   |
 * example:  
 ```shell
 tpmg --scale --title="Adjust Transparency" \
@@ -201,7 +201,7 @@ tpmg --scale --title="Adjust Transparency" \
   | --text=    | string       | set label text    | "Set options below:" |
   | --type=    | check\|radio | set list type     | check                |
   | --options= | csv          | set options list  |
-  | --default= | radio: string<br/>check: csv | radio: default option<br/>check: set option to true |
+  | --default= | radio:string<br/>check:csv | radio:default option<br/>check:set option to true |
   | --anchor=  | w\|e\|c      | list placement in window | w             |
   | --help     |              | this help         |
 * returns:  
