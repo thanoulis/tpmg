@@ -50,6 +50,8 @@ basic options:
   # namespace and variables for the help system
   namespace eval help {
     variable Color {
+Display a color selection dialog. Appearance depends on platform.
+
 options for Color Select dialog:
   --title="string"    set window title  [default: "Select a Color"]
   --color="#hexcolor" set initial color [default: "#d9d9d9"]
@@ -60,6 +62,8 @@ returns: color hex code on 'OK', 1 on 'Cancel', 255 on error
 example: tpmg --color --title="Choose Color" --color="#eed421"
 }
     variable Directory {
+Display a directory selection dialog. Appearance depends on platform.
+
 options for Directory Select dialog:
   --title="string" set window title     [default: "Select a Directory"]
   --exist          directory must exist [no default]
@@ -70,6 +74,8 @@ returns: directory path on 'OK', 1 on 'Cancel', 255 on error
 example: tpmg --directory --title="Select a Directory" --exist
 }
     variable FileSelect {
+Display a file selection dialog. Appearance depends on platform.
+
 options for Files Select dialog:
   --title="string" set window title    [default: "Select Files"]
   --ext="csv"      set filetype filter [default: show all files]
@@ -82,6 +88,8 @@ returns: file path on 'Open', 1 on 'Cancel', 255 on error
 example: tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
 }
     variable FileSave {
+Display a file save dialog. Appearance depends on platform.
+
 options for File Save dialog:
   --title="string"  set window title            [default: "Save File"]
   --ext="csv"       set filetype filter         [default: show all files]
@@ -94,6 +102,12 @@ returns: file path on 'Save', 1 on 'Cancel', 255 on error
 example: tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
 }
     variable Information {
+Display an information dialog.
+Supports icons for info, error, question and warning.
+Can have a combination of buttons, as okcancel, yesno, retrycancel, etc.
+Main message is bold and equals to the first non option string.
+All other strings are message details, with every string represent a line.
+
 options for Information dialog:
   --title="string"    set window title         [no default]
   --icon="one of: info,error,question,warning"
@@ -109,6 +123,10 @@ returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
 example: tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"
 }
     variable Password {
+Display a classic username/password dialog.
+Username entry can be omitted.
+Password entry hides text with asterisks.
+
 options for Password dialog:
   --title="string" set window title          [default: "Login As"]
   --nousername     hide the "Username" entry [no default]
@@ -120,6 +138,9 @@ returns: list with username and password on 'OK', 1 on 'Cancel', 255 on error
 example: tpmg --password --title="Welcome $USER" --nousername
 }
     variable Entry {
+Display any number of entry dialogs. Default is one.
+Configuration is done through "--text" option, with comma separated label texts.
+
 options for Entry dialog:
   --title="string" set window title [default: "Enter Text"]
   --text="csv"     set label text   [default: "Enter text below:"]
@@ -130,6 +151,9 @@ returns: entries' list on 'OK', 1 on 'Cancel', 255 on error
 example: tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:"
 }
     variable Scale {
+Display a scale dialog.
+Min, max and current value can be configured.
+
 options for Scale dialog:
   --title="string"  set window title  [default: "Adjust Value"]
   --text="string"   set label text    [default: "Adjust value below:"]
@@ -143,6 +167,10 @@ returns: scale value on 'OK', 1 on 'Cancel', 255 on error
 example: tpmg --scale --title="Adjust Transparency" --text="Choose window transparency:" --min="0" --max="100" --value="20"
 }
     variable Text {
+Display a text information dialog.
+Text can be from file, from command line in the form of every string is a new line and from standard input.
+In case of multiple inputs, will concatenate the text, with file->string->stdin hierarchy.
+
 options for Text dialog:
   --title="string"  set window title [default: "Show Text"]
   --file="filepath" file to show     [no default]
@@ -153,14 +181,16 @@ options for Text dialog:
                     text body (every string in a new line)
   --help            this help
 
-in case of multiple inputs:
-  Text will concatenate the result, with hierarchy: file string stdin
-
 returns: ok on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --text --title="README" --file="~/README.txt" --edit --font="{DejaVu Sans Mono} 12 bold"
 }
     variable List {
+Display an option list with radio or check buttons.
+Default is check buttons.
+Configuration is done through "--options" option, with comma separated list.
+Can also set the "default" option in a radio list, or toggle default values in the check list.
+
 options for List dialog:
   --title="string"      set window title    [default: "Set Options"]
   --text="string"       set label text      [default: "Set options below:"]
@@ -179,9 +209,10 @@ returns:
 example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="center"
 }
     variable Progress {
+Display a progress bar dialog.
 Progress dialog reads data from stdin line by line.
-Lines must be prefixed with "tpmg:". All other lines are ignored.
-If the rest are only numbers, the progress bar advances to that number.
+Lines must be prefixed with "tpmg:", or are ignored.
+If text is a number, the progress bar advances to that number.
 Else, it updates the label text.
 
 options for Progress dialog:
@@ -196,7 +227,7 @@ options for Progress dialog:
 
 returns: ok on 'OK', 1 on 'Cancel', 255 on error
 
-bugs: wrong behavior on --pulse
+bugs: wrong behavior on pulsating progress bar (not critical)
 
 example:
 #!/usr/bin/env sh
