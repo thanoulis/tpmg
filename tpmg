@@ -736,6 +736,7 @@ proc tPMG::dialog::List {args} {
       }
       --options=* {
         set options [split [string range $option 10 end] ","]
+        set tPMG::dialog::value [llength $options]
       }
       --anchor=* {
         set valid [list w e c]
@@ -760,40 +761,48 @@ proc tPMG::dialog::List {args} {
       }
     }
   }
+  if {$options eq ""} {
+    puts stderr "no options defined"
+    tPMG::Help "list" stderr
+    return $tPMG::Error
+  }
   ttk::labelframe .list -relief flat -text $text
   if {$type eq "radio"} {
     set tPMG::dialog::list(radio) [join $default]
-    foreach opt $options {
-      set w [string cat "." [string tolower $opt]]
-      ttk::radiobutton $w -text $opt \
-        -variable tPMG::dialog::list(radio) -value $opt
+    set i 0
+    foreach item $options {
+      set litem [string cat "." $i]
+      ttk::radiobutton $litem -text $item -value $item \
+        -variable tPMG::dialog::list(radio)
+      pack $litem -in .list -anchor $anchor
+      incr i
     }
     ttk::button .ok -text "OK" -command {
       lappend tPMG::dialog::response $tPMG::dialog::list(radio)
     }
   } else {
-    foreach opt $options {
-      set w [string cat "." [string tolower $opt]]
-      if {$opt in $default} {
-        set tPMG::dialog::list($opt) "true"
+    set i 0
+    foreach item $options {
+      set litem [string cat "." $i]
+      if {$item in $default} {
+        set tPMG::dialog::list($i) "true"
       } else {
-        set tPMG::dialog::list($opt) "false"
+        set tPMG::dialog::list($i) "false"
       }
-      ttk::checkbutton $w -text $opt -onvalue "true" -offvalue "false" \
-        -variable tPMG::dialog::list($opt)
+      ttk::checkbutton $litem -text $item \
+        -onvalue "true" -offvalue "false" \
+        -variable tPMG::dialog::list($i)
+      pack $litem -in .list -anchor $anchor
+      incr i
     }
-    ttk::button .ok -text "OK" -command [list \
-      foreach i $options {
+    ttk::button .ok -text "OK" -command {
+      for {set i 0} {$i <= $tPMG::dialog::value} {incr i} {
         lappend tPMG::dialog::response $tPMG::dialog::list($i)
       }
-    ]
+    }
   }
   ttk::button .cancel -text "Cancel" -command {set tPMG::dialog::response $tPMG::Cancel}
-  foreach win $options {
-    set win [string cat "." [string tolower $win]]
-    pack $win -in .list -anchor $anchor
-    pack .list -padx 5 -pady 5
-  }
+  pack .list -padx 5 -pady 5
   pack .ok .cancel -padx 10 -pady 5 -side left
   bind all <Return> {.ok invoke}
   bind all <Escape> {.cancel invoke}
