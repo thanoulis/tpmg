@@ -124,6 +124,10 @@
   ![InformationDialog](screenshots/InformationDialog.png "InformationDialog")
 
 #### Password dialog
+* description:<br/>
+  Display a classic username/password dialog.<br/>
+  Username entry can be omitted.<br/>
+  Password entry hides text with asterisks.
 * options:
   | option        | type   | description                 | default      |
   |---------------|:------:|-----------------------------|:------------:|
@@ -134,33 +138,40 @@
   | OK                    | Cancel | Error |
   |:---------------------:|:------:|:-----:|
   | username<br/>password | 1      | 255   |
-* example:  
-```shell
-tpmg --password --title="Welcome $USER" --nousername
-```
-* screenshot:  
-![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
+* example:<br/>
+  ```shell
+  tpmg --password --title="Welcome $USER" --nousername
+  ```
+* screenshot:<br/>
+  ![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
 
 #### Entry dialog
+* description:<br/>
+  Display any number of entry dialogs. Default is one.<br/>
+  Configuration is done through `--text` option, with comma separated label texts, as in example below.
 * options:
   | option        | type   | description      | default             |
   |---------------|:------:|------------------|:-------------------:|
   | --title=      | string | set window title | "Enter Text"        |
-  | --text=       | string | set label text   | "Enter text below:" |
+  | --text=       | csv    | set label text   | "Enter text below:" |
   | --help        |        | this help        |
 * returns:
   | OK         | Cancel | Error |
   |:----------:|:------:|:-----:|
   | entry list | 1      | 255   |
-* example:  
-```shell
-tpmg --entry --title="Personal Information" \
-  --text="First name:,Last name:,email:"
-```
-* screenshot:  
-![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
+* example:
+  ```shell
+  tpmg --entry --title="Personal Information" \
+    --text="First name:,Last name:,email:"
+  ```
+* screenshot:<br/>
+  ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
 
 #### Text dialog
+* description:<br/>
+  Display a text information dialog.<br/>
+  Text can be from file, from command line in the form of every string is a new line and from standard input.<br/>
+  In case of multiple inputs, **Text** will concatenate the result, with `file`->`string`->`stdin` hierarchy.
 * options:
   | option        | type   | description       | default       |
   |---------------|:------:|-------------------|:-------------:|
@@ -170,20 +181,21 @@ tpmg --entry --title="Personal Information" \
   | --font=       | font   | font to use       | "TkFixedFont" |
   | other strings | string | text body (every string is a new line) |  
   | --help        |        | this help         |
->In case of multiple inputs, **Text** will concatenate the result, with hierarchy: file string stdin
 * returns:  
   | OK | Cancel | Error |
   |:--:|:------:|:-----:|
   | ok | 1      | 255   |
-* example:  
-```shell
-tpmg --text --title="README" --file="~/README.txt" \
-  --edit --font="{DejaVu Sans Mono} 12 bold"
-```
-* screenshot:  
-![TextDialog](screenshots/TextDialog.png "TextDialog")
+* example:
+  ```shell
+  tpmg --text --title="README" --file="~/README.txt" \
+    --edit --font="{DejaVu Sans Mono} 12 bold"
+  ```
+* screenshot:<br/>
+  ![TextDialog](screenshots/TextDialog.png "TextDialog")
 
 #### Scale dialog
+* description:<br/>
+  Display a scale dialog. Min, max and current value can be configured.
 * options:
   | option   | type    | description       | default               |
   |----------|:-------:|-------------------|:---------------------:|
@@ -193,20 +205,25 @@ tpmg --text --title="README" --file="~/README.txt" \
   | --max=   | integer | set max value     | 100                   |
   | --value= | integer | set initial value | 0                     |
   | --help   |         | this help         |
-* returns:  
+* returns:
   | OK    | Cancel | Error |
   |:-----:|:------:|:-----:|
   | scale | 1      | 255   |
-* example:  
-```shell
-tpmg --scale --title="Adjust Transparency" \
-  --text="Choose window transparency:" \
-  --min="0" --max="100" --value="20"
-```
-* screenshot:  
-![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
+* example:
+  ```shell
+  tpmg --scale --title="Adjust Transparency" \
+    --text="Choose window transparency:" \
+    --min="0" --max="100" --value="20"
+  ```
+* screenshot:<br/>
+  ![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
 
 #### List dialog
+* description:<br/>
+  Display an option list with radio or check buttons. Default is check buttons.<br/>
+  Configuration is done through `--options` option, with comma separated list, much like in **Entry** dialog.<br/>
+  Can also set the "default" option in a radio list, or toggle default values in the check list.<br/>
+  The following example shows how.
 * options:
   | option     | type         | description       | default              |
   |------------|:------------:|-------------------|:--------------------:|
@@ -217,26 +234,27 @@ tpmg --scale --title="Adjust Transparency" \
   | --default= | radio:string<br/>check:csv | radio:default option<br/>check:set option to true |
   | --anchor=  | w\|e\|c      | list placement in window | w             |
   | --help     |              | this help         |
-* returns:  
+* returns:
   | OK                      | Cancel | Error |
   |:-----------------------:|:------:|:-----:|
   | radio: selected option  | 1      | 255   |
   | check: true\|false list | 1      | 255   |
-* example:  
-```shell
-tpmg --list --title="Select filetype" --text="Select filetype:" \
-  --type="radio" --options="Text File,RTF Document,Word Document" \
-  --default="Text File" --anchor="w"
-```
-* screenshot:  
-![ListDialog](screenshots/ListDialog.png "ListDialog")
+* example:
+  ```shell
+  tpmg --list --title="Select filetype" --text="Select filetype:" \
+    --type="radio" --options="Text File,RTF Document,Word Document" \
+    --default="Text File" --anchor="w"
+  ```
+* screenshot:<br/>
+  ![ListDialog](screenshots/ListDialog.png "ListDialog")
 
 #### Progress dialog
-* description:  
-**Progress** dialog reads data from **stdin** line by line.
-Lines must be prefixed with `tpmg:`. All other lines are ignored.
-If the rest are only numbers, the progress bar advances to that number.
-Else, it updates the label text.
+* description:<br/>
+  Display a progress bar dialog.<br/>
+  **Progress** dialog reads data from `stdin` line by line.<br/>
+  Lines must be prefixed with `tpmg:`, or are ignored.<br/>
+  If text consists of only numbers, the progress bar advances to that number.<br/>
+  Else, it updates the label text.
 * options:
   | option   | type     | description                | default         |
   |----------|:--------:|----------------------------|:---------------:|
@@ -248,29 +266,30 @@ Else, it updates the label text.
   | --max=   | integer  | set max value              | 100             |
   | --value= | integer  | set initial bar value      | 0               |
   | --help   |          | this help                  |
-* returns:  
+* returns:
   | OK | Cancel | Error |
   |:--:|:------:|:-----:|
   | ok | 1      | 255   |
-* example:  
-```shell
-#!/usr/bin/env sh
-(
-echo "tpmg:Starting jobs..."; sleep 1
-echo "tpmg:30"; echo "tpmg:Setting variables..."; sleep 1
-echo "tpmg:70"; echo "tpmg:Clearing cache..."; sleep 1
-echo "This line will be ignored"; sleep 1
-echo "tpmg:100"; echo "tpmg:Done."
-) | tpmg --progress --color="#948b84" --auto
-```
-* screenshot:  
-![ProgressDialog](screenshots/ProgressDialog.png "ProgressDialog")
-* bugs: wrong behavior on pulsating progress bar (not critical though)
+* example:
+  ```shell
+  #!/usr/bin/env sh
+  (
+  echo "tpmg:Starting jobs..."; sleep 1
+  echo "tpmg:30"; echo "tpmg:Setting variables..."; sleep 1
+  echo "tpmg:70"; echo "tpmg:Clearing cache..."; sleep 1
+  echo "This line will be ignored"; sleep 1
+  echo "tpmg:100"; echo "tpmg:Done."
+  ) | tpmg --progress --color="#948b84" --auto
+  ```
+* screenshot:<br/>
+  ![ProgressDialog](screenshots/ProgressDialog.png "ProgressDialog")
+* bugs:<br/>
+  wrong behavior on pulsating progress bar (not critical though)
+
 
 ### Dependencies
 * **Tcl** version 8.6 or later.
 * **Tk** version 8.6 or later.
-
 ##### For Microsoft Windows users:
 * [ActiveTcl](https://www.activestate.com/activetcl) version 8.6 or later.
 
@@ -278,4 +297,4 @@ echo "tpmg:100"; echo "tpmg:Done."
 ### License
 **tpmg** is licensed under the **MIT License**.
 
-Read LICENSE for details.
+Read [LICENSE](LICENSE) for details.
