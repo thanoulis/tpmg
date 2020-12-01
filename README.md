@@ -186,7 +186,11 @@
   | radio: selected option  | 1      | 255   |
   | check: true\|false list | 1      | 255   |
 * example:  
-`tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="w"`
+```shell
+tpmg --list --title="Select filetype" --text="Select filetype:" \
+  --type="radio" --options="Text File,RTF Document,Word Document" \
+  --default="Text File" --anchor="w"
+```
 * screenshot:  
 ![ListDialog](screenshots/ListDialog.png "ListDialog")
 
@@ -212,7 +216,7 @@ Else, it updates the label text.
   |:--:|:------:|:-----:|
   | ok | 1      | 255   |
 * example:  
-```
+```shell
 #!/usr/bin/env sh
 (
 echo "tpmg:Starting jobs..."; sleep 1
