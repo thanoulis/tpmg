@@ -36,7 +36,7 @@ basic options:
     --help          this help
     --help all      print options for all available dialogs
     --help <dialog> print all available options for <dialog>
-}
+  }
   # namespace for dialogs
   namespace eval dialog {
     array set list     {}
@@ -60,7 +60,7 @@ options for Color Select dialog:
 returns: color hex code on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --color --title="Choose Color" --color="#eed421"
-}
+    }
     variable Directory {
 Display a directory selection dialog. Appearance depends on platform.
 
@@ -72,7 +72,7 @@ options for Directory Select dialog:
 returns: directory path on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --directory --title="Select a Directory" --exist
-}
+    }
     variable FileSelect {
 Display a file selection dialog. Appearance depends on platform.
 
@@ -86,7 +86,7 @@ returns: file path on 'Open', 1 on 'Cancel', 255 on error
   on multiple selection, returns list
 
 example: tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
-}
+    }
     variable FileSave {
 Display a file save dialog. Appearance depends on platform.
 
@@ -100,7 +100,7 @@ options for File Save dialog:
 returns: file path on 'Save', 1 on 'Cancel', 255 on error
 
 example: tpmg --filesave --title="Save File" --file="~/myfile.txt" --noconfirm
-}
+    }
     variable Information {
 Display an information dialog.
 Supports icons for info, error, question and warning.
@@ -121,7 +121,7 @@ options for Information dialog:
 returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
 
 example: tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"
-}
+    }
     variable Password {
 Display a classic username/password dialog.
 Username entry can be omitted.
@@ -136,7 +136,7 @@ returns: list with username and password on 'OK', 1 on 'Cancel', 255 on error
   --nousername: returns only password
 
 example: tpmg --password --title="Welcome $USER" --nousername
-}
+    }
     variable Entry {
 Display any number of entry dialogs. Default is one.
 Configuration is done through "--text" option, with comma separated label texts.
@@ -149,7 +149,7 @@ options for Entry dialog:
 returns: entries' list on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:"
-}
+    }
     variable Scale {
 Display a scale dialog.
 Min, max and current value can be configured.
@@ -165,7 +165,7 @@ options for Scale dialog:
 returns: scale value on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --scale --title="Adjust Transparency" --text="Choose window transparency:" --min="0" --max="100" --value="20"
-}
+    }
     variable Text {
 Display a text information dialog.
 Text can be from file, from command line in the form of every string is a new line and from standard input.
@@ -184,7 +184,7 @@ options for Text dialog:
 returns: ok on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --text --title="README" --file="~/README.txt" --edit --font="{DejaVu Sans Mono} 12 bold"
-}
+    }
     variable List {
 Display an option list with radio or check buttons.
 Default is check buttons.
@@ -207,7 +207,7 @@ returns:
   checklist: true/false list on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="center"
-}
+    }
     variable Progress {
 Display a progress bar dialog.
 Progress dialog reads data from stdin line by line.
@@ -238,7 +238,7 @@ echo "tpmg:70"; echo "tpmg:Clearing cache..."; sleep 1
 echo "This line will be ignored"; sleep 1
 echo "tpmg:100"; echo "tpmg:Done."
 ) | tpmg --progress --color="#948b84" --auto
-}
+    }
   # end of namespace tPMG::help
   }
 #end of namespace tPMG
@@ -305,7 +305,8 @@ proc tPMG::dialog::Directory {args} {
     }
   }
   wm withdraw .
-  set response [file nativename [tk_chooseDirectory -title $title -mustexist $exist]]
+  set response [file nativename [tk_chooseDirectory -title $title \
+    -mustexist $exist]]
   if {$response eq ""} {return $tPMG::Cancel}
   return $response
 }
@@ -450,8 +451,8 @@ proc tPMG::dialog::Information {args} {
     set detail [join $detail "\n"]
   }
   set cmd [list tk_messageBox]
-  foreach config [list default icon type title message detail] {
-    lappend cmd -${config} [subst $[subst $config]]
+  foreach config [list title icon type default message detail] {
+    lappend cmd [string cat "-" $config] [subst $[subst $config]]
   }
   wm withdraw .
   if {[catch {set response [{*}$cmd]} msg]} {
@@ -961,7 +962,10 @@ proc tPMG::Help {{args ""} {out "stdout"}} {
   switch -- $args {
     all {
       set all [info vars ::tPMG::help::*]
-      foreach help $all {puts [subst $[subst $help]]}
+      foreach help $all {
+        puts $out "#### [lindex [split $help "::"] end] ####"
+        puts $out [subst $[subst $help]]
+      }
       exit 0
     }
     color       {set help $tPMG::help::Color}
@@ -1053,7 +1057,7 @@ proc tPMG::Argv {} {
         return 0
       }
       --calendar {
-        puts "calendar is not implemented yet"
+        puts stdout "calendar is not implemented yet"
         exit 0
       }
       --help {
@@ -1076,13 +1080,14 @@ bind all <KP_Enter> {event generate %W <Return>}
 wm protocol . WM_DELETE_WINDOW {exit 1}
 tPMG::Argv
 set tPMG::cmdReturn [{*}$tPMG::Cmd]
-if {$tPMG::cmdReturn eq $tPMG::Error} {
+if false {
+} elseif {$tPMG::cmdReturn eq $tPMG::Error} {
   exit 255
 } elseif {$tPMG::cmdReturn eq $tPMG::Cancel} {
   exit 1
 } else {
   foreach line $tPMG::cmdReturn {
-    puts $line
+    puts stdout $line
   }
   exit 0
 }
