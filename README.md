@@ -1,4 +1,9 @@
+
+----
+
 **tpmg** is a 'Poor Mans's GUI' much like [zenity](https://gitlab.gnome.org/GNOME/zenity) or [kdialog](https://invent.kde.org/utilities/kdialog) written in core [Tcl/Tk](https://www.tcl.tk).
+
+----
 
 ### Dialogs
 * [Color](#color-dialog "Color")
@@ -12,45 +17,70 @@
 * [List](#list-dialog "List")
 * [Progress](#progress-dialog "Progress")
 
+----
+
 #### Color dialog
-* description:<br/>
+
+* description:
+
   Displays a color selection dialog. Appearance depends on platform.
+
 * options:
+
   | option   | type     | description       | default           |
   |----------|:--------:|-------------------|:-----------------:|
   | --title= | string   | set window title  | "Select a Color"  |
   | --color= | hexcolor | set initial color | "#d9d9d9"         |
   | --help   |          | this help         |
+
 * returns:
+
   | OK    | Cancel | Error |
   |:-----:|:------:|:-----:|
   | color | 1      | 255   |
+
 * example:
+
   ```shell
   tpmg --color --title="Choose Color" --color="#eed421"
   ```
-* screenshot:<br/>
+
+* screenshot:
+
   ![ColorDialog](screenshots/ColorDialog.png "ColorDialog")
 
+----
+
 #### Directory dialog
-* description:<br/>
+
+* description:
+
   Display a directory select dialog. Appearance depends on platform.
+
 * options:
+
   | option   | type   | description          | default              |
   |----------|:------:|----------------------|:--------------------:|
   | --title= | string | set window title     | "Select a Directory" |
   | --exist  |        | directory must exist |
   | --help   |        | this help            |
+
 * returns:
+
   | OK        | Cancel | Error |
   |:---------:|:------:|:-----:|
   | directory | 1      | 255   |
+
 * example:
+
   ```shell
   tpmg --directory --title="Select a Directory" --exist
   ```
-* screenshot:<br/>
+* screenshot:
+
   ![DirectoryDialog](screenshots/DirectoryDialog.png "DirectoryDialog")
+
+----
 
 #### FileSelect dialog
 * description:<br/>
@@ -108,7 +138,7 @@
   | --icon=      | icon<sup>1</sup>   | icon to use in dialog       | info    |
   | --button=    | button<sup>2</sup> | buttons to use in dialog    | ok      |
   | first string | string             | main message (in bold)      |
-  | other string | string             | message details             |  
+  | other string | string             | message details             |
   | --help       |                    | this help                   |
 >1: info error question warning<br/>
 >2: ok okcancel yesno yesnocancel retrycancel abortretryignore
@@ -179,7 +209,7 @@
   | --file=       | path   | text file to show |
   | --edit        |        | can edit text     | cannot edit   |
   | --font=       | font   | font to use       | "TkFixedFont" |
-  | other strings | string | text body (every string is a new line) |  
+  | other strings | string | text body (every string is a new line) |
   | --help        |        | this help         |
 * returns:  
   | OK | Cancel | Error |
