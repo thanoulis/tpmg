@@ -36,6 +36,9 @@ basic options:
     --help          this help
     --help all      print options for all available dialogs
     --help <dialog> print all available options for <dialog>
+
+  other:
+    --version       print version information
   }
   # namespace for dialogs
   namespace eval dialog {
@@ -991,6 +994,13 @@ proc tPMG::Help {{args ""} {out "stdout"}} {
   puts $out $help
 }
 
+proc tPMG::Version {version} {
+  puts stdout "tpmg $version"
+  puts stdout "Runs on Tcl/Tk [info patchlevel]"
+  puts stdout "Copyright © 2020 Thanos Zygouris <athanasios.zygouris@gmail.com>"
+  puts stdout ""
+}
+
 ################################################################################
 # ARGUMENT PARSING
 #
@@ -1062,6 +1072,10 @@ proc tPMG::Argv {} {
       }
       --help {
         tPMG::Help $args
+        exit 0
+      }
+      --version {
+        tPMG::Version "0.3.2"
         exit 0
       }
       default {
