@@ -5,6 +5,7 @@
 ----
 
 ### Dialogs
+
 * [Color](#color-dialog "Color")
 * [Directory](#directory-dialog "Directory")
 * [FileSelect](#fileselect-dialog "FileSelect")
