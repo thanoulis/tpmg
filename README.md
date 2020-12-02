@@ -1,7 +1,6 @@
-
 ----
 
-**tpmg** is a 'Poor Mans's GUI' much like [zenity](https://gitlab.gnome.org/GNOME/zenity) or [kdialog](https://invent.kde.org/utilities/kdialog) written in core [Tcl/Tk](https://www.tcl.tk).
+**tpmg** is a **Poor Man's GUI** much like [zenity](https://gitlab.gnome.org/GNOME/zenity) or [kdialog](https://invent.kde.org/utilities/kdialog) written in core [Tcl/Tk](https://www.tcl.tk).
 
 ----
 
@@ -459,3 +458,5 @@
 **tpmg** is licensed under the **MIT License**.
 
 Read [LICENSE](LICENSE) for details.
+
+----
