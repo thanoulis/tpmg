@@ -320,6 +320,7 @@
   | --min=   | integer | set min value     | 0                     |
   | --max=   | integer | set max value     | 100                   |
   | --value= | integer | set initial value | 0                     |
+  | --step=  | integer | set step size     | 1                     |
   | --help   |         | this help         |
 
 * returns:
