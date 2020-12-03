@@ -1264,7 +1264,7 @@ proc tPMG::Argv {} {
         exit 0
       }
       --version {
-        tPMG::Version "0.3.2"
+        tPMG::Version "0.4.0"
         exit 0
       }
       default {
