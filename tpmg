@@ -181,6 +181,7 @@ options for Scale dialog:
   --min="integer"   set min value     [default: "0"]
   --max="integer"   set max value     [default: "100"]
   --value="integer" set initial value [default: "0"]
+  --step="integer"  set step size     [default: "1"]
   --help            this help
 
 returns: scale value on 'OK', 1 on 'Cancel', 255 on error
@@ -622,6 +623,7 @@ proc tPMG::dialog::Scale {args} {
   set from  0
   set to    100
   set value 0
+  set step  1
   foreach option {*}$args {
     switch -glob -- $option {
       --title=* {
@@ -653,6 +655,9 @@ proc tPMG::dialog::Scale {args} {
         }
         set tPMG::dialog::value $value
       }
+      --step=* {
+        set step [string range $option 7 end]
+      }
       --help {
         tPMG::Help "scale"
         exit 0
@@ -664,22 +669,22 @@ proc tPMG::dialog::Scale {args} {
       }
     }
   }
-  # resolve possible conflict on label text
+  # resolve possible conflict on value
   if {$from != 0 && $value != 0} {
     set tPMG::dialog::value $value
   }
   ttk::labelframe .fscale -relief flat -text $text
-  ttk::scale .scale -from $from -to $to -value $value \
+  # ttk::scale looks better, but lacks the -resolution option
+  tk::scale .scale -orient horizontal -sliderrelief groove \
+    -from $from -to $to -resolution $step \
     -variable tPMG::dialog::value
-  ttk::label .value -relief flat -anchor center \
-    -textvariable tPMG::dialog::value
   ttk::button .ok -text "OK" -command {
     set tPMG::dialog::response $tPMG::dialog::value
   }
   ttk::button .cancel -text "Cancel" -command {
     set tPMG::dialog::response $tPMG::Cancel
   }
-  pack .scale .value -in .fscale -fill x
+  pack .scale -in .fscale -fill x
   pack .fscale -padx 10 -pady 5 -fill x -expand true
   pack .ok .cancel -padx 10 -pady 5 -side left
   bind all <Return> {.ok invoke}
