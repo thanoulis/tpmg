@@ -163,11 +163,12 @@ Configuration is done through "--text" option, with comma separated label texts.
 options for Entry dialog:
   --title="string" set window title [default: "Enter Text"]
   --text="csv"     set label text   [default: "Enter text below:"]
+  --default="csv"  set initial text [no default]
   --help           this help
 
 returns: entries' list on 'OK', 1 on 'Cancel', 255 on error
 
-example: tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:"
+example: tpmg --entry --title="Personal Information" --text="First name:,Last name:,email:" --default=",,email@example.com"
     }
     variable Scale {
 Display a scale dialog.
@@ -563,8 +564,9 @@ proc tPMG::dialog::Password {args} {
 # ENTRY DIALOG
 #
 proc tPMG::dialog::Entry {args} {
-  set title "Enter Text"
-  set text  [list "Enter text below:"]
+  set title   "Enter Text"
+  set text    [list "Enter text below:"]
+  set default ""
   foreach option {*}$args {
     switch -glob -- $option {
       --title=* {
@@ -573,6 +575,9 @@ proc tPMG::dialog::Entry {args} {
       --text=*  {
         set text [split [string range $option 7 end] ","]
         set tPMG::dialog::value [llength $text]
+      }
+      --default=* {
+        set default [split [string range $option 10 end] ","]
       }
       --help {
         tPMG::Help "entry"
@@ -585,6 +590,11 @@ proc tPMG::dialog::Entry {args} {
       }
     }
   }
+  if {$text eq ""} {
+    puts stderr "no entries defined"
+    tPMG::Help "entry" stderr
+    return $tPMG::Error
+  }
   set i 0
   foreach item $text {
     set tPMG::dialog::list($i) ""
@@ -592,6 +602,9 @@ proc tPMG::dialog::Entry {args} {
     set frame [string cat $entry "frame"]
     ttk::labelframe $frame -relief flat -text $item
     ttk::entry $entry -textvariable tPMG::dialog::list($i)
+    if {$default ne ""} {
+      set tPMG::dialog::list($i) [lindex $default $i]
+    }
     pack $entry -in $frame
     pack $frame -pady 5
     incr i
