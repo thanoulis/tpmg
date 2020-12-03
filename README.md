@@ -244,6 +244,7 @@
   |---------------|:------:|------------------|:-------------------:|
   | --title=      | string | set window title | "Enter Text"        |
   | --text=       | csv    | set label text   | "Enter text below:" |
+  | --default=    | csv    | set initial text |
   | --help        |        | this help        |
 
 * returns:
@@ -256,7 +257,8 @@
 
   ```shell
   tpmg --entry --title="Personal Information" \
-    --text="First name:,Last name:,email:"
+    --text="First name:,Last name:,email:" \
+    --default=",,email@example.com"
   ```
 
 * screenshot:
