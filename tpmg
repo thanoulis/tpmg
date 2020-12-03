@@ -49,17 +49,15 @@ basic options:
     variable text      {}
     variable password  {}
     variable value     0
+    # initialize date (for Calendar dialog)
     array set date     {}
-      set date(day)    {}
-      set date(month)  {}
-      set date(year)   {}
+      set now          [clock scan now]
+      set date(year)   [clock format $now -format "%Y"]
+      set date(month)  [clock format $now -format "%m"]
+      set date(day)    [clock format $now -format "%d"]
     # namespace for calendar
     namespace eval calendar {
       variable format "%a %d %b %Y"
-      variable now [clock scan now]
-      set tPMG::dialog::date(year) [clock format $now -format "%Y"]
-      scan [clock format $now -format "%m"] %d tPMG::dialog::date(month)
-      scan [clock format $now -format "%d"] %d tPMG::dialog::date(day)
       variable weekdays [list Sun Mon Tue Wed Thu Fri Sat]
       variable months [list . January February March April May June \
         July August September October November December
@@ -268,13 +266,16 @@ Format options are almost the same with "date" utility from "coreutils".
 See "man n clock" (tcl) or "man 1 date" (coreutils) for details.
 
 options for Calendar dialog:
-  --title="string"  set window title [default: "Select Date"]
-  --format="string" format date      [default: "%a %d %b %Y"]
+  --title="string"  set window title  [default: "Select Date"]
+  --format="string" format date       [default: "%a %d %b %Y"]
+  --day="integer"   set initial day   [default: current day]
+  --month="integer" set initial month [default: current month]
+  --year="integer"  set initial year  [default: current year]
   --help            this help
 
 returns: selected date on 'OK', 1 on 'Cancel', 255 on error
 
-example: tpmg --calendar --title="Select a date" --format="%d%m%y"
+example: tpmg --calendar --title="Select a date" --format="%d%m%y" --day="18" --month="3" --year="1986"
     }
   # end of namespace tPMG::help
   }
@@ -1119,6 +1120,38 @@ proc tPMG::dialog::Calendar {args} {
       }
       --format=* {
         set tPMG::dialog::calendar::format [string range $option 9 end]
+      }
+      --day=* {
+        for {set i 1} {$i <= 31} {incr i} {
+          lappend dday $i
+        }
+        set day [string range $option 6 end]
+        if {$day ni $dday} {
+          puts stderr "not a valid day: $day"
+          puts stderr "use one of: $dday"
+          return $tPMG::Error
+        }
+        set tPMG::dialog::date(day) $day
+      }
+      --month=* {
+        for {set i 1} {$i <= 12} {incr i} {
+          lappend dmonth $i
+        }
+        set month [string range $option 8 end]
+        if {$month ni $dmonth} {
+          puts stderr "not a valid month: $month"
+          puts stderr "use one of: $dmonth"
+          return $tPMG::Error
+        }
+        set tPMG::dialog::date(month) $month
+      }
+      --year=* {
+        set year [string range $option 7 end]
+        if {![string is integer $year]} {
+          puts stderr "not a year: $year"
+          return $tPMG::Error
+        }
+        set tPMG::dialog::date(year) $year
       }
       --help {
         tPMG::Help "calendar"
