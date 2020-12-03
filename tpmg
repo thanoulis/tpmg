@@ -686,7 +686,7 @@ proc tPMG::dialog::Scale {args} {
   }
   pack .scale -in .fscale -fill x
   pack .fscale -padx 10 -pady 5 -fill x -expand true
-  pack .ok .cancel -padx 10 -pady 5 -side left
+  pack .ok .cancel -padx 10 -pady 5 -expand true -side left
   bind all <Return> {.ok invoke}
   bind all <Escape> {.cancel invoke}
   wm title     . $title
