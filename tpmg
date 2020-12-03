@@ -31,6 +31,7 @@ basic options:
     --scale         display Scale dialog
     --list          display List dialog
     --progress      display Progress dialog
+    --calendar      display Calendar dialog
 
   help:
     --help          this help
@@ -48,6 +49,23 @@ basic options:
     variable text      {}
     variable password  {}
     variable value     0
+    array set date     {}
+      set date(day)    {}
+      set date(month)  {}
+      set date(year)   {}
+    # namespace for calendar
+    namespace eval calendar {
+      variable format "%a %d %b %Y"
+      variable now [clock scan now]
+      set tPMG::dialog::date(year) [clock format $now -format "%Y"]
+      scan [clock format $now -format "%m"] %d tPMG::dialog::date(month)
+      scan [clock format $now -format "%d"] %d tPMG::dialog::date(day)
+      variable weekdays [list Sun Mon Tue Wed Thu Fri Sat]
+      variable months [list . January February March April May June \
+        July August September October November December
+      ]
+    # end of namespace tPMG::dialog::calendar
+    }
   # end of namespace tPMG::dialog
   }
   # namespace and variables for the help system
@@ -112,14 +130,14 @@ Main message is bold and equals to the first non option string.
 All other strings are message details, with every string represent a line.
 
 options for Information dialog:
-  --title="string"    set window title         [no default]
+  --title="string"  set window title         [no default]
   --icon="one of: info,error,question,warning"
-                      icon to use in dialog    [default: "info"]
+                    icon to use in dialog    [default: "info"]
   --button="one of: ok,okcancel,yesno,yesnocancel,retrycancel,abortretryignore"
-                      buttons to use in dialog [default: "ok"]
-  "first string"      main message (bold)
-  "other" "strings"   message details (every string in a new line)
-  --help              this help
+                    buttons to use in dialog [default: "ok"]
+  "first string"    main message (bold)
+  "other" "strings" message details (every string in a new line)
+  --help            this help
 
 returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
 
@@ -195,15 +213,15 @@ Configuration is done through "--options" option, with comma separated list.
 Can also set the "default" option in a radio list, or toggle default values in the check list.
 
 options for List dialog:
-  --title="string"      set window title    [default: "Set Options"]
-  --text="string"       set label text      [default: "Set options below:"]
-  --type="radio|check"  set list type       [default: "check"]
-  --options="csv"       set options list    [no default]
+  --title="string"     set window title    [default: "Set Options"]
+  --text="string"      set label text      [default: "Set options below:"]
+  --type="radio|check" set list type       [default: "check"]
+  --options="csv"      set options list    [no default]
   --default="radio:string|check:csv"
-      for radiolist:    default radio value [no default]
-      for checklist:    set <option> "true" [no default]
-  --anchor="w|e|c"      placement in window [default: "w"]
-  --help                this help
+      for radiolist:   default radio value [no default]
+      for checklist:   set <option> "true" [no default]
+  --anchor="w|e|c"     placement in window [default: "w"]
+  --help               this help
 
 returns:
   radiolist: selected string on 'OK', 1 on 'Cancel', 255 on error
@@ -241,6 +259,21 @@ echo "tpmg:70"; echo "tpmg:Clearing cache..."; sleep 1
 echo "This line will be ignored"; sleep 1
 echo "tpmg:100"; echo "tpmg:Done."
 ) | tpmg --progress --color="#948b84" --auto
+    }
+    variable Calendar {
+Display a date selection dialog.
+Date format can be customized with "--format" option.
+Format options are almost the same with "date" utility from "coreutils".
+See "man n clock" (tcl) or "man 1 date" (coreutils) for details.
+
+options for Calendar dialog:
+  --title="string"  set window title [default: "Select Date"]
+  --format="string" format date      [default: "%a %d %b %Y"]
+  --help            this help
+
+returns: selected date on 'OK', 1 on 'Cancel', 255 on error
+
+example: tpmg --calendar --title="Select a date" --format="%d%m%y"
     }
   # end of namespace tPMG::help
   }
@@ -959,6 +992,161 @@ proc tPMG::dialog::Progress {args} {
 }
 
 ################################################################################
+# CALENDAR DIALOG
+#
+# most of calendar code is taken from:
+# http://tcltk.free.fr/source/date.tcl
+# reference:
+# https://wiki.tcl-lang.org/page/An+i15d+date+chooser
+# credits to Richard Suchenwirth
+#
+# calendar initialization
+proc tPMG::dialog::calendar::Init {} {
+  tk::canvas .calendar -bg white -width 200 -height 180
+  .calendar bind day <1> {
+    set item [%W find withtag current]
+    set tPMG::dialog::date(day) [%W itemcget $item -text]
+    tPMG::dialog::calendar::Draw
+  }
+  tPMG::dialog::calendar::Button .calendar 20  30 < \
+    {tPMG::dialog::calendar::Adjust -1  0}
+  tPMG::dialog::calendar::Button .calendar 100 30 > \
+    {tPMG::dialog::calendar::Adjust  1  0}
+  tPMG::dialog::calendar::Button .calendar 120 30 < \
+    {tPMG::dialog::calendar::Adjust  0 -1}
+  tPMG::dialog::calendar::Button .calendar 170 30 > \
+    {tPMG::dialog::calendar::Adjust  0  1}
+  tPMG::dialog::calendar::Draw
+}
+# adjust month/year values
+proc tPMG::dialog::calendar::Adjust {dmonth dyear} {
+  incr tPMG::dialog::date(year)  $dyear
+  incr tPMG::dialog::date(month) $dmonth
+  if {$tPMG::dialog::date(month) > 12} {
+    set tPMG::dialog::date(month) 1
+    incr tPMG::dialog::date(year)
+  }
+  if {$tPMG::dialog::date(month) < 1} {
+    set tPMG::dialog::date(month) 12
+    incr tPMG::dialog::date(year) -1
+  }
+  set dmax [tPMG::dialog::calendar::Days \
+    $tPMG::dialog::date(month) $tPMG::dialog::date(year)]
+  if {$dmax < $tPMG::dialog::date(day)} {
+    set tPMG::dialog::date(day) $dmax
+  }
+  tPMG::dialog::calendar::Draw
+}
+# draw calendar
+proc tPMG::dialog::calendar::Draw {} {
+  foreach tag {title otherday day} {
+    .calendar delete $tag
+  }
+  set x0 20; set x $x0; set y 50
+  set dx 25; set dy 20
+  set xmax [expr {${x0} + ${dx} * 6}]
+  set date [clock scan ${tPMG::dialog::date(month)}/${tPMG::dialog::date(day)}/${tPMG::dialog::date(year)}]
+  set tPMG::dialog::date(date) [clock format $date \
+    -format $tPMG::dialog::calendar::format]
+  set tmonth [lindex $tPMG::dialog::calendar::months \
+    $tPMG::dialog::date(month)]
+  set tyear $tPMG::dialog::date(year)
+  .calendar create text [expr {($xmax + $dx) / 2}] 10 \
+    -text $tPMG::dialog::date(date) -fill black -tag title
+  .calendar create text 60 30 -text $tmonth -fill blue -tag title
+  .calendar create text 145 30 -text $tyear -fill blue -tag title
+  foreach i $tPMG::dialog::calendar::weekdays {
+    .calendar create text $x $y -text $i -fill blue -tag title
+    incr x $dx
+  }
+  set first ${tPMG::dialog::date(month)}/1/${tPMG::dialog::date(year)}
+  set weekday [clock format [clock scan $first] -format %w]
+  set x [expr {$x0 + $weekday * $dx}]
+  set x1 $x; set offset 0
+  incr y $dy
+  while {$weekday} {
+    set t [clock scan "$first [incr offset] days ago"]
+    scan [clock format $t -format "%d"] %d day
+    .calendar create text [incr x1 -$dx] $y -text $day \
+      -fill grey -tag otherday
+    incr weekday -1
+  }
+  set dmax [tPMG::dialog::calendar::Days \
+    $tPMG::dialog::date(month) $tPMG::dialog::date(year)]
+  for {set d 1} {$d <= $dmax} {incr d} {
+    set id [.calendar create text $x $y -text $d -tag day]
+    if {$d == $tPMG::dialog::date(day)} {
+      eval .calendar create rect [.calendar bbox $id] \
+        -fill orange -outline orange -tag day
+    }
+    .calendar raise $id
+    if {[incr x $dx] > $xmax} {set x $x0; incr y $dy}
+  }
+  if {$x != $x0} {
+    for {set d 1} {$x <= $xmax} {incr d; incr x $dx} {
+      .calendar create text $x $y -text $d -fill grey -tag otherday
+    }
+  }
+}
+# calculate days
+proc tPMG::dialog::calendar::Days {month year} {
+  if {$month == 12} {set month 0; incr year}
+  clock format [clock scan "[incr month]/1/${year} 1 day ago"] \
+    -format %d
+}
+# '<' '>' buttons
+proc tPMG::dialog::calendar::Button {w x y text command} {
+  set txt [$w create text $x $y -text " $text "]
+  set btn [eval $w create rect [$w bbox $txt] \
+    -fill white -outline white]
+  $w raise $txt
+  foreach i [list $txt $btn] {
+    $w bind $i <1> $command
+  }
+}
+# main calendar dialog
+proc tPMG::dialog::Calendar {args} {
+  set title "Select Date"
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --format=* {
+        set tPMG::dialog::calendar::format [string range $option 9 end]
+      }
+      --help {
+        tPMG::Help "calendar"
+        exit 0
+      }
+      default {
+        puts stderr "unknown option: $option"
+        tPMG::Help "calendar" stderr
+        return $tPMG::Error
+      }
+    }
+  }
+  tPMG::dialog::calendar::Init
+  ttk::frame .frame
+  ttk::button .ok -text "OK" -command {
+    set tPMG::dialog::response $tPMG::dialog::date(date)
+  }
+  ttk::button .cancel -text "Cancel" -command {
+    set tPMG::dialog::response $tPMG::Cancel
+  }
+  pack .ok .cancel -in .frame -padx 10 -pady 5 -side left
+  bind all <Return> {.ok invoke}
+  bind all <Escape> {.cancel invoke}
+  pack .calendar
+  pack .frame -pady 5
+  wm title     . $title
+  wm resizable . 0 0
+  focus .ok
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+################################################################################
 # HELP SYSTEM
 #
 proc tPMG::Help {{args ""} {out "stdout"}} {
@@ -984,6 +1172,7 @@ proc tPMG::Help {{args ""} {out "stdout"}} {
     text        {set help $tPMG::help::Text}
     list        {set help $tPMG::help::List}
     progress    {set help $tPMG::help::Progress}
+    calendar    {set help $tPMG::help::Calendar}
     ""          {set help $tPMG::helpBasic}
     default     {
       puts stderr "unknown help option: $args"
@@ -1067,8 +1256,8 @@ proc tPMG::Argv {} {
         return 0
       }
       --calendar {
-        puts stdout "calendar is not implemented yet"
-        exit 0
+        set tPMG::Cmd [list tPMG::dialog::Calendar $args]
+        return 0
       }
       --help {
         tPMG::Help $args
