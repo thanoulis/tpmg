@@ -16,6 +16,7 @@
 * [Scale](#scale-dialog "Scale")
 * [List](#list-dialog "List")
 * [Progress](#progress-dialog "Progress")
+* [Calendar](#calendar-dialog "Calendar")
 
 ----
 
@@ -439,6 +440,43 @@
 * bugs:
 
   Wrong behavior on pulsating progress bar (not critical).
+
+----
+
+#### Calendar dialog
+
+* description:
+
+  Display a date selection dialog.
+
+  Date format can be customized with `--format` option.
+
+  Format options are almost the same with `date` utility from **coreutils**.
+
+  See `man n clock` or `man 1 date` for details.
+
+* options:
+  | option        | type   | description      | default       |
+  |---------------|:------:|------------------|:-------------:|
+  | --title=      | string | set window title | "Select Date  |
+  | --format=     | string | format date      | "%a %d %b %Y" |
+  | --help        |        | this help        |
+
+* returns:
+
+  | OK                | Cancel | Error |
+  |:-----------------:|:------:|:-----:|
+  | selected<br/>date | 1      | 255   |
+
+* example:
+
+  ```shell
+  tpmg --calendar --title="Select a date" --format="%d%m%y"
+  ```
+
+* screenshot:
+
+  ![CalendarDialog](screenshots/CalendarDialog.png "CalendarDialog")
 
 ----
 
