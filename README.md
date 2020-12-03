@@ -457,11 +457,14 @@
   See `man n clock` or `man 1 date` for details.
 
 * options:
-  | option        | type   | description      | default       |
-  |---------------|:------:|------------------|:-------------:|
-  | --title=      | string | set window title | "Select Date  |
-  | --format=     | string | format date      | "%a %d %b %Y" |
-  | --help        |        | this help        |
+  | option        | type    | description       | default       |
+  |---------------|:-------:|-------------------|:-------------:|
+  | --title=      | string  | set window title  | "Select Date  |
+  | --format=     | string  | format date       | "%a %d %b %Y" |
+  | --day=        | integer | set initial day   | current day   |
+  | --month=      | integer | set initial month | current month |
+  | --year=       | integer | set initial year  | current year  |
+  | --help        |         | this help         |
 
 * returns:
 
@@ -472,7 +475,8 @@
 * example:
 
   ```shell
-  tpmg --calendar --title="Select a date" --format="%d%m%y"
+  tpmg --calendar --title="Select a date" --format="%d%m%y" \
+    --day="18" --month="3" --year="1986"
   ```
 
 * screenshot:
