@@ -32,6 +32,7 @@ basic options:
     --list          display List dialog
     --progress      display Progress dialog
     --calendar      display Calendar dialog
+    --notification  display Notification popup
 
   help:
     --help          this help
@@ -277,6 +278,31 @@ options for Calendar dialog:
 returns: selected date on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --calendar --title="Select a date" --format="%d%m%y" --day="18" --month="3" --year="1986"
+    }
+    variable Notification {
+Display a notification popup.
+Does not need a running notification daemon.
+Notification popup will close when clicked, or after "delay" seconds.
+
+options for Notification popup:
+  --title="string"         set window title     [default: "tPMG Notification"]
+  --delay="integer"        set delay (seconds)  [default: 5]
+  --geometry="{width}x{height}±X±Y"             [default: upper right]
+      width   popup width in pixels
+      height  popup height in pixels
+      X       popup X position on screen
+      Y       popup Y position on screen
+      "width"x"height" or "±X±Y" can be omitted.
+  --icon="one of: info,error,question,warning"
+                           set popup icon       [default: no icon]
+  --background="#hexcolor" set background color [default: "orange"]
+  --foreground="#hexcolor" set foreground color [default: "black"]
+  "other" "strings"        text to show (every string in a new line)
+  --help                   this help
+
+returns: ok after close, 255 on error
+
+example: tpmg --notification --title="myNotification" --delay="10" --geometry="200x50+0+0" --icon="error" --background="#f8a300" --foreground="#ffffff" "Cannot execute order 66"
     }
   # end of namespace tPMG::help
   }
@@ -1198,6 +1224,79 @@ proc tPMG::dialog::Calendar {args} {
 }
 
 ################################################################################
+# iNOTIFICATION
+#
+proc tPMG::dialog::Notification {args} {
+  set title    "tPMG Notification"
+  set delay    5
+  set geometry "180x50+[expr {[winfo screenwidth .] - 180}]+0"
+  set icon     ""
+  set bg       "yellow"
+  set fg       "black"
+  set text     ""
+  foreach option {*}$args {
+    switch -glob -- $option {
+      --title=* {
+        set title [string range $option 8 end]
+      }
+      --delay=* {
+        set delay [string range $option 8 end]
+        if {![string is integer $delay]} {
+          puts stderr "not an integer: $delay"
+          return $tPMG::Error
+        }
+      }
+      --geometry=* {
+        set geometry [string range $option 11 end]
+      }
+      --icon=* {
+        set licon [list info error question warning]
+        set icon [string range $option 7 end]
+        if {$icon ni $licon} {
+          puts stderr "not a valid icon: $icon"
+          puts stderr "use one of: $licon"
+          return $tPMG::Error
+        }
+      }
+      --background=* {
+        set bg [string range $option 13 end]
+      }
+      --foreground=* {
+        set fg [string range $option 13 end]
+      }
+      --help {
+        tPMG::Help "notification"
+        exit 0
+      }
+      default {
+        append text $option "\n"
+      }
+    }
+  }
+  if {[set text [string range $text 0 end-1]] eq ""} {
+    return $tPMG::Error
+  }
+  tk::label .label -background $bg -foreground $fg -text $text
+  if {$icon ne ""} {
+    tk::label .icon -background $bg -foreground $fg -bitmap $icon
+    pack .icon .label -padx 0 -pady 0 -fill both -expand true -side left
+  } else {
+    pack .label -padx 0 -pady 0 -fill both -expand true
+  }
+  bind all <ButtonPress-1> {set tPMG::dialog::response "ok"}
+  wm title      . $title
+  wm attributes . -topmost true
+  wm attributes . -type notification
+  wm overrideredirect . true
+  wm geometry  . $geometry
+  wm resizable . 0 0
+  after [expr {$delay * 1000}] {set tPMG::dialog::response "ok"}
+  vwait tPMG::dialog::response
+  return $tPMG::dialog::response
+}
+
+
+################################################################################
 # HELP SYSTEM
 #
 proc tPMG::Help {{args ""} {out "stdout"}} {
@@ -1210,22 +1309,23 @@ proc tPMG::Help {{args ""} {out "stdout"}} {
       }
       exit 0
     }
-    color       {set help $tPMG::help::Color}
-    dir         {set help $tPMG::help::Directory}
-    directory   {set help $tPMG::help::Directory}
-    fileselect  {set help $tPMG::help::FileSelect}
-    filesave    {set help $tPMG::help::FileSave}
-    info        {set help $tPMG::help::Information}
-    information {set help $tPMG::help::Information}
-    password    {set help $tPMG::help::Password}
-    entry       {set help $tPMG::help::Entry}
-    scale       {set help $tPMG::help::Scale}
-    text        {set help $tPMG::help::Text}
-    list        {set help $tPMG::help::List}
-    progress    {set help $tPMG::help::Progress}
-    calendar    {set help $tPMG::help::Calendar}
-    ""          {set help $tPMG::helpBasic}
-    default     {
+    color        {set help $tPMG::help::Color}
+    dir          {set help $tPMG::help::Directory}
+    directory    {set help $tPMG::help::Directory}
+    fileselect   {set help $tPMG::help::FileSelect}
+    filesave     {set help $tPMG::help::FileSave}
+    info         {set help $tPMG::help::Information}
+    information  {set help $tPMG::help::Information}
+    password     {set help $tPMG::help::Password}
+    entry        {set help $tPMG::help::Entry}
+    scale        {set help $tPMG::help::Scale}
+    text         {set help $tPMG::help::Text}
+    list         {set help $tPMG::help::List}
+    progress     {set help $tPMG::help::Progress}
+    calendar     {set help $tPMG::help::Calendar}
+    notification {set help $tPMG::help::Notification}
+    ""           {set help $tPMG::helpBasic}
+    default {
       puts stderr "unknown help option: $args"
       puts stderr $tPMG::helpBasic
       exit 255
@@ -1308,6 +1408,10 @@ proc tPMG::Argv {} {
       }
       --calendar {
         set tPMG::Cmd [list tPMG::dialog::Calendar $args]
+        return 0
+      }
+      --notification {
+        set tPMG::Cmd [list tPMG::dialog::Notification $args]
         return 0
       }
       --help {
