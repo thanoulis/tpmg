@@ -499,22 +499,23 @@
   Notification popup will close when clicked, or after `delay` seconds.
 
 * options:
-  | option        | type                 | description                      | default             |
-  |---------------|:--------------------:|----------------------------------|:-------------------:|
-  | --title=      | string               | set window title                 | "tPMG Notification" |
-  | --delay=      | integer              | set timeout (seconds)            | 5                   |
-  | --geometry=   | `width`x`height±X±Y` | set window geometry <sup>1</sup> | upper right corner  |
-  | --icon=       | icon<sup>2</sup>     | icon to use                      |
-  | --background= | hexcolor             | set background color             | orange              |
-  | --foreground= | hexcolor             | set foreground color             | black               |
-  | other strings | string               | text to show                     |
-  | --help        |                      | this help                        |
+  | option        | type                 | description                     | default             |
+  |---------------|:--------------------:|---------------------------------|:-------------------:|
+  | --title=      | string               | set window title                | "tPMG Notification" |
+  | --delay=      | integer              | set timeout (seconds)           | 5                   |
+  | --geometry=   | `width`x`height±X±Y` | set popup geometry <sup>1</sup> | upper right corner  |
+  | --icon=       | icon<sup>2</sup>     | icon to use                     |
+  | --background= | hexcolor             | set background color            | orange              |
+  | --foreground= | hexcolor             | set foreground color            | black               |
+  | other strings | string               | text to show                    |
+  | --help        |                      | this help                       |
 
-  >1: width:  popup width in pixels<br/>
-  >   height: popup height in pixels<br/>
-  >   X:      popup X position on screen</br/>
-  >   Y:      popup Y position on screen<br/>
-  > `width`x`height or `±X±Y` can be omitted
+  >1:<br/>
+  > width:  popup width in pixels<br/>
+  > height: popup height in pixels<br/>
+  > X:      popup X position on screen<br/>
+  > Y:      popup Y position on screen<br/>
+  >`width`x`height` or `±X±Y` can be omitted<br/>
   >2: info error question warning
 
 * returns:
