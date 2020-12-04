@@ -302,7 +302,7 @@ options for Notification popup:
 
 returns: ok after close, 255 on error
 
-example: tpmg --notification --title="myNotification" --delay="10" --geometry="200x50+0+0" --icon="error" --background="#f8a300" --foreground="#ffffff" "Cannot execute order 66"
+example: tpmg --notification --title="Notify Sith Lord" --delay="10" --geometry="200x50+0+0" --icon="error" --background="#f8a300" --foreground="#ffffff" "System failure" "Cannot execute order 66"
     }
   # end of namespace tPMG::help
   }
