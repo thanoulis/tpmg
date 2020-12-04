@@ -17,6 +17,7 @@
 * [List](#list-dialog "List")
 * [Progress](#progress-dialog "Progress")
 * [Calendar](#calendar-dialog "Calendar")
+* [Notification](#notification-popup "Notification")
 
 ----
 
@@ -484,6 +485,56 @@
 * screenshot:
 
   ![CalendarDialog](screenshots/CalendarDialog.png "CalendarDialog")
+
+----
+
+#### Notification popup
+
+* description:
+
+  Display a notification popup.
+
+  Does not need a running notification daemon.
+
+  Notification popup will close when clicked, or after `delay` seconds.
+
+* options:
+  | option        | type                 | description                      | default             |
+  |---------------|:--------------------:|----------------------------------|:-------------------:|
+  | --title=      | string               | set window title                 | "tPMG Notification" |
+  | --delay=      | integer              | set timeout (seconds)            | 5                   |
+  | --geometry=   | `width`x`height±X±Y` | set window geometry <sup>1</sup> | upper right corner  |
+  | --icon=       | icon<sup>2</sup>     | icon to use                      |
+  | --background= | hexcolor             | set background color             | orange              |
+  | --foreground= | hexcolor             | set foreground color             | black               |
+  | other strings | string               | text to show                     |
+  | --help        |                      | this help                        |
+
+  >1: width:  popup width in pixels<br/>
+  >   height: popup height in pixels<br/>
+  >   X:      popup X position on screen</br/>
+  >   Y:      popup Y position on screen<br/>
+  > `width`x`height or `±X±Y` can be omitted
+  >2: info error question warning
+
+* returns:
+
+  | OK   | Error |
+  |:----:|:-----:|
+  | ok   | 255   |
+
+* example:
+
+  ```shell
+  tpmg --notification --title="Notify Sith Lord" --delay="10" \
+    --geometry="200x50+0+0" --icon="error" \
+    --background="#f8a300" --foreground="#ffffff" \
+    "System failure" "Cannot execute order 66"
+  ```
+
+* screenshot:
+
+  ![Notification](screenshots/Notification.png "Notification")
 
 ----
 
