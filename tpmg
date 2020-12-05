@@ -46,6 +46,8 @@ basic options:
   namespace eval dialog {
     array set list     {}
       set list(radio)  {}
+      set list(combo)  {}
+      set list(lcombo) [list]
     variable response  {}
     variable text      {}
     variable password  {}
@@ -208,25 +210,29 @@ returns: ok on 'OK', 1 on 'Cancel', 255 on error
 example: tpmg --text --title="README" --file="~/README.txt" --edit --font="{DejaVu Sans Mono} 12 bold"
     }
     variable List {
-Display an option list with radio or check buttons.
-Default is check buttons.
+Display an option list with radio buttons, combobox or check buttons.
+Default type is check buttons.
 Configuration is done through "--options" option, with comma separated list.
-Can also set the "default" option in a radio list, or toggle default values in the check list.
+"Default" option set preselected option in a radio/combobox list, or set "true" values in the check list.
 
 options for List dialog:
   --title="string"     set window title    [default: "Set Options"]
   --text="string"      set label text      [default: "Set options below:"]
-  --type="radio|check" set list type       [default: "check"]
+  --type="radio|combo|check"
+                       set list type       [default: "check"]
   --options="csv"      set options list    [no default]
-  --default="radio:string|check:csv"
-      for radiolist:   default radio value [no default]
-      for checklist:   set <option> "true" [no default]
+  --default="radio:string|combo:string|check:csv"
+              radio:   default radio value [no default]
+              combo:   default radio value [no default]
+              check:   set <option> "true" [no default]
   --anchor="w|e|c"     placement in window [default: "w"]
+  --edit               can edit combobox   [default: read only]
   --help               this help
 
 returns:
-  radiolist: selected string on 'OK', 1 on 'Cancel', 255 on error
-  checklist: true/false list on 'OK', 1 on 'Cancel', 255 on error
+  radio: selected string on 'OK', 1 on 'Cancel', 255 on error
+  combo: selected string on 'OK', 1 on 'Cancel', 255 on error
+  check: true/false list on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="center"
     }
@@ -302,7 +308,7 @@ options for Notification popup:
 
 returns: ok after close, 255 on error
 
-example: tpmg --notification --title="Notify Sith Lord" --delay="10" --geometry="200x50+0+0" --icon="error" --background="#f8a300" --foreground="#ffffff" "System failure" "Cannot execute order 66"
+example: tpmg --notification --title="Notify Sith Lord" --delay="10" --geometry="200x50+0+0" --icon="error" --background="#f8a300" --foreground="#000000" "System failure" "Cannot execute order 66"
     }
   # end of namespace tPMG::help
   }
@@ -844,6 +850,7 @@ proc tPMG::dialog::List {args} {
   set options ""
   set anchor  "w"
   set default ""
+  set state   "readonly"
   foreach option {*}$args {
     switch -glob -- $option {
       --title=* {
@@ -853,7 +860,7 @@ proc tPMG::dialog::List {args} {
         set text [string range $option 7 end]
       }
       --type=* {
-        set valid [list check radio]
+        set valid [list radio combo check]
         set type [string range $option 7 end]
         if {$type ni $valid} {
           puts stderr "unknown --type option: $type"
@@ -876,6 +883,9 @@ proc tPMG::dialog::List {args} {
       }
       --default=* {
         set default [split [string range $option 10 end] ","]
+      }
+      --edit {
+        set state "normal"
       }
       --help {
         tPMG::Help "list"
@@ -906,6 +916,15 @@ proc tPMG::dialog::List {args} {
     }
     ttk::button .ok -text "OK" -command {
       lappend tPMG::dialog::response $tPMG::dialog::list(radio)
+    }
+  } elseif {$type eq "combo"} {
+    set tPMG::dialog::list(lcombo) $options
+    set tPMG::dialog::list(combo) [join $default]
+    ttk::combobox .combo -state $state -values $tPMG::dialog::list(lcombo) \
+      -textvariable tPMG::dialog::list(combo)
+    pack .combo -in .list -anchor $anchor
+    ttk::button .ok -text "OK" -command {
+      lappend tPMG::dialog::response $tPMG::dialog::list(combo)
     }
   } else {
     set i 0
@@ -1224,7 +1243,7 @@ proc tPMG::dialog::Calendar {args} {
 }
 
 ################################################################################
-# iNOTIFICATION
+# NOTIFICATION
 #
 proc tPMG::dialog::Notification {args} {
   set title    "tPMG Notification"
