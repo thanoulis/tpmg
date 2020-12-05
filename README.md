@@ -350,11 +350,11 @@
 
 * description:
 
-  Display an option list with radio or check buttons. Default is check buttons.
+  Display an option list with radio, combobox or check buttons. Default type is check buttons.
 
   Configuration is done through `--options` option, with comma separated list, much like in **Entry** dialog.
 
-  Can also set the "default" option in a radio list, or toggle default values in the check list.
+  Can also set the "default" option in a radio/combobox list, or toggle default values in the check list.
 
   The following example shows how.
 
@@ -364,10 +364,11 @@
   |------------|:------------:|-------------------|:--------------------:|
   | --title=   | string       | set window title  | "Set Options"        |
   | --text=    | string       | set label text    | "Set options below:" |
-  | --type=    | check\|radio | set list type     | check                |
+  | --type=    | radio\|combo\|check | set list type     | check                |
   | --options= | csv          | set options list  |
-  | --default= | radio:string<br/>check:csv | radio:default option<br/>check:set option to true |
+  | --default= | radio:string<br/>combo:string<br/>check:csv | radio:default option<br/>combo:default option<br/>check:set option to true |
   | --anchor=  | w\|e\|c      | list placement in window | w             |
+  | --edit     |              | can edit combobox | read only            |
   | --help     |              | this help         |
 
 * returns:
@@ -375,6 +376,7 @@
   | OK                      | Cancel | Error |
   |:-----------------------:|:------:|:-----:|
   | radio: selected option  | 1      | 255   |
+  | combo: selected option  | 1      | 255   |
   | check: true\|false list | 1      | 255   |
 
 * example:
@@ -529,7 +531,7 @@
   ```shell
   tpmg --notification --title="Notify Sith Lord" --delay="10" \
     --geometry="200x50+0+0" --icon="error" \
-    --background="#f8a300" --foreground="#ffffff" \
+    --background="#f8a300" --foreground="#000000" \
     "System failure" "Cannot execute order 66"
   ```
 
