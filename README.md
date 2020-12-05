@@ -6,18 +6,60 @@
 
 ### Dialogs
 
+* [Calendar](#calendar-dialog "Calendar")
 * [Color](#color-dialog "Color")
 * [Directory](#directory-dialog "Directory")
-* [FileSelect](#fileselect-dialog "FileSelect")
-* [FileSave](#filesave-dialog "FileSave")
-* [Information](#information-dialog "Information")
-* [Password](#password-dialog "Password")
 * [Entry](#entry-dialog "Entry")
-* [Scale](#scale-dialog "Scale")
+* [FileSave](#filesave-dialog "FileSave")
+* [FileSelect](#fileselect-dialog "FileSelect")
+* [Information](#information-dialog "Information")
 * [List](#list-dialog "List")
-* [Progress](#progress-dialog "Progress")
-* [Calendar](#calendar-dialog "Calendar")
 * [Notification](#notification-popup "Notification")
+* [Password](#password-dialog "Password")
+* [Progress](#progress-dialog "Progress")
+* [Scale](#scale-dialog "Scale")
+* [Text](#text-dialog "Text")
+
+----
+
+#### Calendar dialog
+
+* description:
+
+  Display a date selection dialog.
+
+  Date format can be customized with `--format` option.
+
+  Format options are almost the same with `date` utility from **coreutils**.
+
+  See `man n clock` or `man 1 date` for details.
+
+* options:
+  | option        | type    | description       | default       |
+  |---------------|:-------:|-------------------|:-------------:|
+  | --title=      | string  | set window title  | "Select Date  |
+  | --format=     | string  | format date       | "%a %d %b %Y" |
+  | --day=        | integer | set initial day   | current day   |
+  | --month=      | integer | set initial month | current month |
+  | --year=       | integer | set initial year  | current year  |
+  | --help        |         | this help         |
+
+* returns:
+
+  | OK                | Cancel | Error |
+  |:-----------------:|:------:|:-----:|
+  | selected<br/>date | 1      | 255   |
+
+* example:
+
+  ```shell
+  tpmg --calendar --title="Select a date" --format="%d%m%y" \
+    --day="18" --month="3" --year="1986"
+  ```
+
+* screenshot:
+
+  ![CalendarDialog](screenshots/CalendarDialog.png "CalendarDialog")
 
 ----
 
@@ -85,36 +127,39 @@
 
 ----
 
-#### FileSelect dialog
+#### Entry dialog
 
 * description:
 
-  Display a file selection dialog. Appearance depends on platform.
+  Display any number of entry dialogs. Default is one.
+
+  Configuration is done through `--text` option, with comma separated label texts, as in example below.
 
 * options:
-
-  | option    | type   | description           | default        |
-  |-----------|:------:|-----------------------|:--------------:|
-  | --title=  | string | set window title      | "Select Files" |
-  | --ext=    | csv    | set filetype filter   | show all files |
-  | --single  |        | single file selection |
-  | --help    |        | this help             |
+  | option        | type   | description      | default             |
+  |---------------|:------:|------------------|:-------------------:|
+  | --title=      | string | set window title | "Enter Text"        |
+  | --text=       | csv    | set label text   | "Enter text below:" |
+  | --default=    | csv    | set initial text |
+  | --help        |        | this help        |
 
 * returns:
 
-  | OK        | Cancel | Error |
-  |:---------:|:------:|:-----:|
-  | file list | 1      | 255   |
+  | OK         | Cancel | Error |
+  |:----------:|:------:|:-----:|
+  | entry list | 1      | 255   |
 
 * example:
 
   ```shell
-  tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
+  tpmg --entry --title="Personal Information" \
+    --text="First name:,Last name:,email:" \
+    --default=",,email@example.com"
   ```
 
 * screenshot:
 
-  ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
+  ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
 
 ----
 
@@ -149,6 +194,39 @@
 * screenshot:
 
   ![FileSaveDialog](screenshots/FileSaveDialog.png "FileSaveDialog")
+
+----
+
+#### FileSelect dialog
+
+* description:
+
+  Display a file selection dialog. Appearance depends on platform.
+
+* options:
+
+  | option    | type   | description           | default        |
+  |-----------|:------:|-----------------------|:--------------:|
+  | --title=  | string | set window title      | "Select Files" |
+  | --ext=    | csv    | set filetype filter   | show all files |
+  | --single  |        | single file selection |
+  | --help    |        | this help             |
+
+* returns:
+
+  | OK        | Cancel | Error |
+  |:---------:|:------:|:-----:|
+  | file list | 1      | 255   |
+
+* example:
+
+  ```shell
+  tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
+  ```
+
+* screenshot:
+
+  ![FileSelectDialog](screenshots/FileSelectDialog.png "FileSelectDialog")
 
 ----
 
@@ -196,156 +274,6 @@
 
 ----
 
-#### Password dialog
-
-* description:
-
-  Display a classic username/password dialog.
-
-  Username entry can be omitted.
-
-  Password entry hides text with asterisks.
-
-* options:
-
-  | option        | type   | description                 | default      |
-  |---------------|:------:|-----------------------------|:------------:|
-  | --title=      | string | set window title            | "Login As"   |
-  | --nousername  |        | hide the "Username" entry   |
-  | --help        |        | this help                   |
-
-* returns:
-
-  | OK                    | Cancel | Error |
-  |:---------------------:|:------:|:-----:|
-  | username<br/>password | 1      | 255   |
-
-* example:
-
-  ```shell
-  tpmg --password --title="Welcome $USER" --nousername
-  ```
-
-* screenshot:
-
-  ![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
-
-----
-
-#### Entry dialog
-
-* description:
-
-  Display any number of entry dialogs. Default is one.
-
-  Configuration is done through `--text` option, with comma separated label texts, as in example below.
-
-* options:
-  | option        | type   | description      | default             |
-  |---------------|:------:|------------------|:-------------------:|
-  | --title=      | string | set window title | "Enter Text"        |
-  | --text=       | csv    | set label text   | "Enter text below:" |
-  | --default=    | csv    | set initial text |
-  | --help        |        | this help        |
-
-* returns:
-
-  | OK         | Cancel | Error |
-  |:----------:|:------:|:-----:|
-  | entry list | 1      | 255   |
-
-* example:
-
-  ```shell
-  tpmg --entry --title="Personal Information" \
-    --text="First name:,Last name:,email:" \
-    --default=",,email@example.com"
-  ```
-
-* screenshot:
-
-  ![EntryDialog](screenshots/EntryDialog.png "EntryDialog")
-
-----
-
-#### Text dialog
-
-* description:
-
-  Display a text information dialog.
-
-  Text can be from file, from command line in the form of every string is a new line and from standard input.
-
-  In case of multiple inputs, will concatenate the text, with `file`->`string`->`stdin` hierarchy.
-
-* options:
-
-  | option        | type   | description       | default       |
-  |---------------|:------:|-------------------|:-------------:|
-  | --title=      | string | set window title  | "Show Text"   |
-  | --file=       | path   | text file to show |
-  | --edit        |        | can edit text     | cannot edit   |
-  | --font=       | font   | font to use       | "TkFixedFont" |
-  | other strings | string | text body (every string is a new line) |
-  | --help        |        | this help         |
-
-* returns:
-
-  | OK | Cancel | Error |
-  |:--:|:------:|:-----:|
-  | ok | 1      | 255   |
-
-* example:
-
-  ```shell
-  tpmg --text --title="README" --file="~/README.txt" \
-    --edit --font="{DejaVu Sans Mono} 12 bold"
-  ```
-
-* screenshot:
-
-  ![TextDialog](screenshots/TextDialog.png "TextDialog")
-
-----
-
-#### Scale dialog
-
-* description:
-
-  Display a scale dialog. Min, max and current value can be configured.
-
-* options:
-
-  | option   | type    | description       | default               |
-  |----------|:-------:|-------------------|:---------------------:|
-  | --title= | string  | set window title  | "Adjust Value"        |
-  | --text=  | string  | set label text    | "Adjust value below:" |
-  | --min=   | integer | set min value     | 0                     |
-  | --max=   | integer | set max value     | 100                   |
-  | --value= | integer | set initial value | 0                     |
-  | --step=  | integer | set step size     | 1                     |
-  | --help   |         | this help         |
-
-* returns:
-
-  | OK    | Cancel | Error |
-  |:-----:|:------:|:-----:|
-  | scale | 1      | 255   |
-
-* example:
-
-  ```shell
-  tpmg --scale --title="Adjust Transparency" \
-    --text="Choose window transparency:" \
-    --min="0" --max="100" --value="20"
-  ```
-
-* screenshot:
-
-  ![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
-
-----
-
 #### List dialog
 
 * description:
@@ -390,6 +318,93 @@
 * screenshot:
 
   ![ListDialog](screenshots/ListDialog.png "ListDialog")
+
+----
+
+#### Notification popup
+
+* description:
+
+  Display a notification popup.
+
+  Does not need a running notification daemon.
+
+  Notification popup will close when clicked, or after `delay` seconds.
+
+* options:
+  | option        | type                 | description                     | default             |
+  |---------------|:--------------------:|---------------------------------|:-------------------:|
+  | --title=      | string               | set window title                | "tPMG Notification" |
+  | --delay=      | integer              | set timeout (seconds)           | 5                   |
+  | --geometry=   | `width`x`height±X±Y` | set popup geometry <sup>1</sup> | upper right corner  |
+  | --icon=       | icon<sup>2</sup>     | icon to use                     |
+  | --background= | hexcolor             | set background color            | orange              |
+  | --foreground= | hexcolor             | set foreground color            | black               |
+  | other strings | string               | text to show                    |
+  | --help        |                      | this help                       |
+
+  >1:<br/>
+  > width:  popup width in pixels<br/>
+  > height: popup height in pixels<br/>
+  > X:      popup X position on screen<br/>
+  > Y:      popup Y position on screen<br/>
+  >`width`x`height` or `±X±Y` can be omitted<br/>
+  >2: info error question warning
+
+* returns:
+
+  | OK   | Error |
+  |:----:|:-----:|
+  | ok   | 255   |
+
+* example:
+
+  ```shell
+  tpmg --notification --title="Notify Sith Lord" --delay="10" \
+    --geometry="200x50+0+0" --icon="error" \
+    --background="#f8a300" --foreground="#000000" \
+    "System failure" "Cannot execute order 66"
+  ```
+
+* screenshot:
+
+  ![Notification](screenshots/Notification.png "Notification")
+
+----
+
+#### Password dialog
+
+* description:
+
+  Display a classic username/password dialog.
+
+  Username entry can be omitted.
+
+  Password entry hides text with asterisks.
+
+* options:
+
+  | option        | type   | description                 | default      |
+  |---------------|:------:|-----------------------------|:------------:|
+  | --title=      | string | set window title            | "Login As"   |
+  | --nousername  |        | hide the "Username" entry   |
+  | --help        |        | this help                   |
+
+* returns:
+
+  | OK                    | Cancel | Error |
+  |:---------------------:|:------:|:-----:|
+  | username<br/>password | 1      | 255   |
+
+* example:
+
+  ```shell
+  tpmg --password --title="Welcome $USER" --nousername
+  ```
+
+* screenshot:
+
+  ![PasswordDialog](screenshots/PasswordDialog.png "PasswordDialog")
 
 ----
 
@@ -449,95 +464,81 @@
 
 ----
 
-#### Calendar dialog
+#### Scale dialog
 
 * description:
 
-  Display a date selection dialog.
-
-  Date format can be customized with `--format` option.
-
-  Format options are almost the same with `date` utility from **coreutils**.
-
-  See `man n clock` or `man 1 date` for details.
+  Display a scale dialog. Min, max and current value can be configured.
 
 * options:
-  | option        | type    | description       | default       |
-  |---------------|:-------:|-------------------|:-------------:|
-  | --title=      | string  | set window title  | "Select Date  |
-  | --format=     | string  | format date       | "%a %d %b %Y" |
-  | --day=        | integer | set initial day   | current day   |
-  | --month=      | integer | set initial month | current month |
-  | --year=       | integer | set initial year  | current year  |
-  | --help        |         | this help         |
+
+  | option   | type    | description       | default               |
+  |----------|:-------:|-------------------|:---------------------:|
+  | --title= | string  | set window title  | "Adjust Value"        |
+  | --text=  | string  | set label text    | "Adjust value below:" |
+  | --min=   | integer | set min value     | 0                     |
+  | --max=   | integer | set max value     | 100                   |
+  | --value= | integer | set initial value | 0                     |
+  | --step=  | integer | set step size     | 1                     |
+  | --help   |         | this help         |
 
 * returns:
 
-  | OK                | Cancel | Error |
-  |:-----------------:|:------:|:-----:|
-  | selected<br/>date | 1      | 255   |
+  | OK    | Cancel | Error |
+  |:-----:|:------:|:-----:|
+  | scale | 1      | 255   |
 
 * example:
 
   ```shell
-  tpmg --calendar --title="Select a date" --format="%d%m%y" \
-    --day="18" --month="3" --year="1986"
+  tpmg --scale --title="Adjust Transparency" \
+    --text="Choose window transparency:" \
+    --min="0" --max="100" --value="20"
   ```
 
 * screenshot:
 
-  ![CalendarDialog](screenshots/CalendarDialog.png "CalendarDialog")
+  ![ScaleDialog](screenshots/ScaleDialog.png "ScaleDialog")
 
 ----
 
-#### Notification popup
+#### Text dialog
 
 * description:
 
-  Display a notification popup.
+  Display a text information dialog.
 
-  Does not need a running notification daemon.
+  Text can be from file, from command line in the form of every string is a new line and from standard input.
 
-  Notification popup will close when clicked, or after `delay` seconds.
+  In case of multiple inputs, will concatenate the text, with `file`->`string`->`stdin` hierarchy.
 
 * options:
-  | option        | type                 | description                     | default             |
-  |---------------|:--------------------:|---------------------------------|:-------------------:|
-  | --title=      | string               | set window title                | "tPMG Notification" |
-  | --delay=      | integer              | set timeout (seconds)           | 5                   |
-  | --geometry=   | `width`x`height±X±Y` | set popup geometry <sup>1</sup> | upper right corner  |
-  | --icon=       | icon<sup>2</sup>     | icon to use                     |
-  | --background= | hexcolor             | set background color            | orange              |
-  | --foreground= | hexcolor             | set foreground color            | black               |
-  | other strings | string               | text to show                    |
-  | --help        |                      | this help                       |
 
-  >1:<br/>
-  > width:  popup width in pixels<br/>
-  > height: popup height in pixels<br/>
-  > X:      popup X position on screen<br/>
-  > Y:      popup Y position on screen<br/>
-  >`width`x`height` or `±X±Y` can be omitted<br/>
-  >2: info error question warning
+  | option        | type   | description       | default       |
+  |---------------|:------:|-------------------|:-------------:|
+  | --title=      | string | set window title  | "Show Text"   |
+  | --file=       | path   | text file to show |
+  | --edit        |        | can edit text     | cannot edit   |
+  | --font=       | font   | font to use       | "TkFixedFont" |
+  | other strings | string | text body (every string is a new line) |
+  | --help        |        | this help         |
 
 * returns:
 
-  | OK   | Error |
-  |:----:|:-----:|
-  | ok   | 255   |
+  | OK | Cancel | Error |
+  |:--:|:------:|:-----:|
+  | ok | 1      | 255   |
 
 * example:
 
   ```shell
-  tpmg --notification --title="Notify Sith Lord" --delay="10" \
-    --geometry="200x50+0+0" --icon="error" \
-    --background="#f8a300" --foreground="#000000" \
-    "System failure" "Cannot execute order 66"
+  tpmg --text --title="README" --file="~/README.txt" \
+    --edit --font="{DejaVu Sans Mono} 12 bold"
   ```
 
 * screenshot:
 
-  ![Notification](screenshots/Notification.png "Notification")
+  ![TextDialog](screenshots/TextDialog.png "TextDialog")
 
 ----
 
