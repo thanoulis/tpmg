@@ -278,11 +278,11 @@
 
 * description:
 
-  Display an option list with radio, combobox or check buttons. Default type is check buttons.
+  Display an option list with radio, combobox, check buttons or menu items. Default type is check buttons.
 
   Configuration is done through `--options` option, with comma separated list, much like in **Entry** dialog.
 
-  Can also set the "default" option in a radio/combobox list, or toggle default values in the check list.
+  Can also set the "default" option in a radio/combobox/menu list, or toggle default values in the check list.
 
   The following example shows how.
 
@@ -292,9 +292,9 @@
   |------------|:------------:|-------------------|:--------------------:|
   | --title=   | string       | set window title  | "Set Options"        |
   | --text=    | string       | set label text    | "Set options below:" |
-  | --type=    | radio\|combo\|check | set list type     | check                |
+  | --type=    | radio\|combo\|menu\|check | set list type | check |
   | --options= | csv          | set options list  |
-  | --default= | radio:string<br/>combo:string<br/>check:csv | radio:default option<br/>combo:default option<br/>check:set option to true |
+| --default= | radio:string<br/>combo:string<br/>menu:string<br/>check:csv | radio:default option<br/>combo:default option<br/>menu:default menu<br/>check:set option to true |
   | --anchor=  | w\|e\|c      | list placement in window | w             |
   | --edit     |              | can edit combobox | read only            |
   | --help     |              | this help         |
@@ -305,6 +305,7 @@
   |:-----------------------:|:------:|:-----:|
   | radio: selected option  | 1      | 255   |
   | combo: selected option  | 1      | 255   |
+  | menu : clicked item     | 1      | 255   |
   | check: true\|false list | 1      | 255   |
 
 * example:
