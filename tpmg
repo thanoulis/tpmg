@@ -12,20 +12,17 @@ if {$::tcl_platform(platform) eq "windows" && [encoding system] ne "utf-8" } {
 namespace eval tpmg {
   variable script    {}
   variable return    {}
+  variable response  {}
   variable ok        {___tpmgOK___}
   variable cancel    {___tpmgCancel___}
   variable error     {___tpmgError___}
-
-  array set list {
-    radio  {}
-    combo  {}
-    lcombo {}
-  }
-  variable response  {}
+  # variables to use as globals
   variable text      {}
   variable password  {}
   variable value     0
-
+  # array for List dialog
+  array set list     {}
+  # array for Calendar dialog
   array set date {
     format {%a %d %b %Y}
     days   {Sun Mon Tue Wed Thu Fri Sat}
@@ -842,50 +839,57 @@ proc tpmg::List {args} {
     return $tpmg::error
   }
   ttk::labelframe .list -relief flat -text $text
-  if {$type eq "radio"} {
-    set tpmg::list(radio) [join $default]
-    set i 0
-    foreach item $options {
-      set litem [string cat "." $i]
-      ttk::radiobutton $litem -text $item -value $item \
-        -variable tpmg::list(radio)
-      pack $litem -in .list -anchor $anchor
-      incr i
-    }
-    ttk::button .ok -text "OK" -command {
-      lappend tpmg::response $tpmg::list(radio)
-    }
-  } elseif {$type eq "combo"} {
-    set tpmg::list(lcombo) $options
-    set tpmg::list(combo) [join $default]
-    ttk::combobox .combo -state $state -values $tpmg::list(lcombo) \
-      -textvariable tpmg::list(combo)
-    pack .combo -in .list -anchor $anchor
-    ttk::button .ok -text "OK" -command {
-      lappend tpmg::response $tpmg::list(combo)
-    }
-  } else {
-    set i 0
-    foreach item $options {
-      set litem [string cat "." $i]
-      if {$item in $default} {
-        set tpmg::list($i) "true"
-      } else {
-        set tpmg::list($i) "false"
+  switch -- $type {
+    radio {
+      set tpmg::list(radio) [join $default]
+      set i 0
+      foreach item $options {
+        set litem [string cat "." $i]
+        ttk::radiobutton $litem -text $item -value $item \
+          -variable tpmg::list(radio)
+        pack $litem -in .list -anchor $anchor
+        incr i
       }
-      ttk::checkbutton $litem -text $item \
-        -onvalue "true" -offvalue "false" \
-        -variable tpmg::list($i)
-      pack $litem -in .list -anchor $anchor
-      incr i
+      ttk::button .ok -text "OK" -command {
+        lappend tpmg::response $tpmg::list(radio)
+      }
     }
-    ttk::button .ok -text "OK" -command {
-      for {set i 0} {$i <= $tpmg::value} {incr i} {
-        lappend tpmg::response $tpmg::list($i)
+    combo {
+      set tpmg::list(options) $options
+      set tpmg::list(combo) [join $default]
+      ttk::combobox .combo -state $state \
+        -values $tpmg::list(options) \
+        -textvariable tpmg::list(combo)
+      pack .combo -in .list -anchor $anchor
+      ttk::button .ok -text "OK" -command {
+        lappend tpmg::response $tpmg::list(combo)
+      }
+    }
+    default {
+      set i 0
+      foreach item $options {
+        set litem [string cat "." $i]
+        if {$item in $default} {
+          set tpmg::list($i) "true"
+        } else {
+          set tpmg::list($i) "false"
+        }
+        ttk::checkbutton $litem -text $item \
+          -onvalue "true" -offvalue "false" \
+          -variable tpmg::list($i)
+        pack $litem -in .list -anchor $anchor
+        incr i
+      }
+      ttk::button .ok -text "OK" -command {
+        for {set i 0} {$i <= $tpmg::value} {incr i} {
+          lappend tpmg::response $tpmg::list($i)
+        }
       }
     }
   }
-  ttk::button .cancel -text "Cancel" -command {set tpmg::response $tpmg::cancel}
+  ttk::button .cancel -text "Cancel" -command {
+    set tpmg::response $tpmg::cancel
+  }
   pack .list -padx 5 -pady 5
   pack .ok .cancel -padx 10 -pady 5 -side left
   bind all <Return> {.ok invoke}
