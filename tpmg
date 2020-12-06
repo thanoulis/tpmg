@@ -26,7 +26,9 @@ namespace eval tpmg {
   array set date {
     format {%a %d %b %Y}
     days   {Sun Mon Tue Wed Thu Fri Sat}
-    months {0 January February March April May June July August September October November December}
+    months {0 January February March April May \
+      June July August September October November December
+    }
   }
     set now          [clock scan now]
     set date(year)   [clock format $now -format "%Y"]
@@ -70,7 +72,7 @@ See "man n clock" (tcl) or "man 1 date" (coreutils) for details.
 
 options for Calendar dialog:
   --title="string"  set window title  [default: "Select Date"]
-  --format="string" format date       [default: "%a %d %b %Y"]
+  --format="string" date format       [default: "%a %d %b %Y"]
   --day="integer"   set initial day   [default: current day]
   --month="integer" set initial month [default: current month]
   --year="integer"  set initial year  [default: current year]
@@ -97,7 +99,7 @@ Display a directory selection dialog. Appearance depends on platform.
 
 options for Directory Select dialog:
   --title="string" set window title     [default: "Select a Directory"]
-  --exist          directory must exist [no default]
+  --exist          directory must exist
   --help           this help
 
 returns: directory path on 'OK', 1 on 'Cancel', 255 on error
@@ -111,7 +113,7 @@ Configuration is done through "--text" option, with comma separated label texts.
 options for Entry dialog:
   --title="string" set window title [default: "Enter Text"]
   --text="csv"     set label text   [default: "Enter text below:"]
-  --default="csv"  set initial text [no default]
+  --default="csv"  set initial text
   --help           this help
 
 returns: entries' list on 'OK', 1 on 'Cancel', 255 on error
@@ -123,9 +125,9 @@ Display a file save dialog. Appearance depends on platform.
 
 options for File Save dialog:
   --title="string"  set window title            [default: "Save File"]
-  --ext="csv"       set filetype filter         [default: show all files]
-  --file="filepath" set initial file            [no default]
-  --noconfirm       do not confirm on overwrite [default: confirm overwrite]
+  --ext="csv"       set filetype filter         [default: show all]
+  --file="filepath" set initial file
+  --noconfirm       do not confirm on overwrite [default: confirm]
   --help            this help
 
 returns: file path on 'Save', 1 on 'Cancel', 255 on error
@@ -137,8 +139,8 @@ Display a file selection dialog. Appearance depends on platform.
 
 options for Files Select dialog:
   --title="string" set window title    [default: "Select Files"]
-  --ext="csv"      set filetype filter [default: show all files]
-  --single         single selection    [no default]
+  --ext="csv"      set filetype filter [default: show all]
+  --single         single selection
   --help           this help
 
 returns: file path on 'Open', 1 on 'Cancel', 255 on error
@@ -150,14 +152,14 @@ example: tpmg --fileselect --title="Select a File" --ext="*.txt,*" --single
 Display an information dialog.
 Supports icons for info, error, question and warning.
 Can have a combination of buttons, as okcancel, yesno, retrycancel, etc.
-Main message is bold and equals to the first non option string.
+Main message is bold and equals to the first non-option string.
 All other strings are message details, with every string represent a line.
 
 options for Information dialog:
-  --title="string"  set window title         [no default]
-  --icon="one of: info,error,question,warning"
+  --title="string"  set window title
+  --icon="info|error|question|warning"
                     icon to use in dialog    [default: "info"]
-  --button="one of: ok,okcancel,yesno,yesnocancel,retrycancel,abortretryignore"
+  --button="ok|okcancel|yesno|yesnocancel|retrycancel|abortretryignore"
                     buttons to use in dialog [default: "ok"]
   "first string"    main message (bold)
   "other" "strings" message details (every string in a new line)
@@ -168,31 +170,33 @@ returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
 example: tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"
     }
     variable List {
-Display an option list with radio buttons, combobox or check buttons.
+Display an option list with radio buttons, combobox, check buttons or menu itesm.
 Default type is check buttons.
 Configuration is done through "--options" option, with comma separated list.
-"Default" option set preselected option in a radio/combobox list, or set "true" values in the check list.
+"Default" option set preselected option in a radio/combobox/menu list, or set "true" values in the check list.
 
 options for List dialog:
   --title="string"     set window title    [default: "Set Options"]
   --text="string"      set label text      [default: "Set options below:"]
-  --type="radio|combo|check"
+  --type="radio|combo|menu|check"
                        set list type       [default: "check"]
-  --options="csv"      set options list    [no default]
-  --default="radio:string|combo:string|check:csv"
-              radio:   default radio value [no default]
-              combo:   default radio value [no default]
-              check:   set <option> "true" [no default]
+  --options="csv"      set options list
+  --default="radio:string|combo:string|menu:string|check:csv"
+              radio:   default radio value
+              combo:   default radio value
+              menu :   default menu option
+              check:   set <option> "true"
   --anchor="w|e|c"     placement in window [default: "w"]
   --edit               can edit combobox   [default: read only]
   --help               this help
 
 returns:
-  radio: selected string on 'OK', 1 on 'Cancel', 255 on error
-  combo: selected string on 'OK', 1 on 'Cancel', 255 on error
+  radio: selected option on 'OK', 1 on 'Cancel', 255 on error
+  combo: selected option on 'OK', 1 on 'Cancel', 255 on error
+  menu : clicked option on "Enter" key, 1 on 'Cancel', 255 on error
   check: true/false list on 'OK', 1 on 'Cancel', 255 on error
 
-example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="center"
+example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="w"
     }
     variable Notification {
 Display a notification popup.
@@ -203,10 +207,10 @@ options for Notification popup:
   --title="string"         set window title     [default: "tpmg Notification"]
   --delay="integer"        set delay (seconds)  [default: 5]
   --geometry="{width}x{height}±X±Y"             [default: upper right]
-      width   popup width in pixels
-      height  popup height in pixels
-      X       popup X position on screen
-      Y       popup Y position on screen
+                 width :   popup width in pixels
+                 height:   popup height in pixels
+                 X     :   popup X position on screen
+                 Y     :   popup Y position on screen
       "width"x"height" or "±X±Y" can be omitted.
   --icon="one of: info,error,question,warning"
                            set popup icon       [default: no icon]
@@ -225,12 +229,12 @@ Username entry can be omitted.
 Password entry hides text with asterisks.
 
 options for Password dialog:
-  --title="string" set window title          [default: "Login As"]
-  --nousername     hide the "Username" entry [no default]
+  --title="string" set window title      [default: "Login As"]
+  --nousername     hide "Username" entry
   --help           this help
 
-returns: list with username and password on 'OK', 1 on 'Cancel', 255 on error
-  --nousername: returns only password
+returns: username and password list on 'OK', 1 on 'Cancel', 255 on error
+  --nousername: returns only password on 'OK'
 
 example: tpmg --password --title="Welcome $USER" --nousername
     }
@@ -243,10 +247,10 @@ Else, it updates the label text.
 
 options for Progress dialog:
   --title="string"    set window title           [default: "Show Progress"]
-  --text="string"     set label text             [no default]
+  --text="string"     set label text
   --color="#hexcolor" set progress bar color     [default: Tk default]
-  --pulse             pulsating progress bar     [no default]
-  --auto              close window on completion [no default]
+  --pulse             pulsating progress bar
+  --auto              close window on completion
   --max="integer"     set max bar value          [default: "100"]
   --value="integer"   set initial bar value      [default: "0"]
   --help              this help
@@ -289,7 +293,7 @@ In case of multiple inputs, will concatenate the text, with file->string->stdin 
 
 options for Text dialog:
   --title="string"  set window title [default: "Show Text"]
-  --file="filepath" file to show     [no default]
+  --file="filepath" file to show
   --edit            can edit text    [default: cannot edit]
   --font="{font name} size bold|italic|underline|overstrike"
                     font to use      [default: "TkFixedFont"]
@@ -431,7 +435,6 @@ proc tpmg::Calendar {args} {
           return $tpmg::error
         }
         set tpmg::date(day) $day
-        unset day valid
       }
       --month=* {
         for {set i 1} {$i <= 12} {incr i} {
@@ -444,7 +447,6 @@ proc tpmg::Calendar {args} {
           return $tpmg::error
         }
         set tpmg::date(month) $month
-        unset month valid
       }
       --year=* {
         set year [string range $option 7 end]
@@ -453,7 +455,6 @@ proc tpmg::Calendar {args} {
           return $tpmg::error
         }
         set tpmg::date(year) $year
-        unset year
       }
       --help {
         tpmg::Help "calendar"
@@ -724,7 +725,6 @@ proc tpmg::Information {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
-        unset valid
       }
       --button=* {
         set valid [list ok okcancel yesno yesnocancel retrycancel abortretrycancel]
@@ -734,7 +734,6 @@ proc tpmg::Information {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
-        unset valid
       }
       --help {
         tpmg::Help "information"
@@ -793,14 +792,13 @@ proc tpmg::List {args} {
         set text [string range $option 7 end]
       }
       --type=* {
-        set valid [list radio combo check]
+        set valid [list radio combo check menu]
         set type [string range $option 7 end]
         if {$type ni $valid} {
           puts stderr "unknown --type option: $type"
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
-        unset valid
       }
       --options=* {
         set options [split [string range $option 10 end] ","]
@@ -814,7 +812,6 @@ proc tpmg::List {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
-        unset valid
       }
       --default=* {
         set default [split [string range $option 10 end] ","]
@@ -865,6 +862,24 @@ proc tpmg::List {args} {
         lappend tpmg::response $tpmg::list(combo)
       }
     }
+    menu {
+      set i 0
+      foreach item $options {
+        set tpmg::list($i) $item
+        set btn [string cat "." $i]
+        ttk::button $btn -style Toolbutton -text $item -command [list \
+          lappend tpmg::response $tpmg::list($i)
+        ]
+        if {$item in $default} {
+          ttk::button .ok -text "OK" -command [list \
+            lappend tpmg::response $tpmg::list($i)
+          ]
+          bind all <Return> {.ok invoke}
+        }
+        pack $btn -in .list -padx 5 -pady 1 -anchor $anchor
+        incr i
+      }
+    }
     default {
       set i 0
       foreach item $options {
@@ -891,12 +906,14 @@ proc tpmg::List {args} {
     set tpmg::response $tpmg::cancel
   }
   pack .list -padx 5 -pady 5
-  pack .ok .cancel -padx 10 -pady 5 -side left
-  bind all <Return> {.ok invoke}
+  if {$type ne "menu"} {
+    pack .ok .cancel -padx 10 -pady 5 -side left
+    bind all <Return> {.ok invoke}
+    focus .ok
+  }
   bind all <Escape> {.cancel invoke}
   wm title     . $title
   wm resizable . 0 0
-  focus .ok
   vwait tpmg::response
   return $tpmg::response
 }
@@ -935,7 +952,6 @@ proc tpmg::Notification {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
-        unset valid
       }
       --background=* {
         set bg [string range $option 13 end]
@@ -1170,7 +1186,6 @@ proc tpmg::Scale {args} {
           return $tpmg::error
         }
         set tpmg::value $value
-        unset value
       }
       --step=* {
         set step [string range $option 7 end]
@@ -1435,7 +1450,7 @@ proc tpmg::readArgs {} {
         exit 0
       }
       --version {
-        tpmg::Version "0.6.0"
+        tpmg::Version "0.7.0"
         exit 0
       }
       default {
