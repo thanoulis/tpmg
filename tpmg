@@ -425,27 +425,29 @@ proc tpmg::Calendar {args} {
       }
       --day=* {
         for {set i 1} {$i <= 31} {incr i} {
-          lappend dday $i
+          lappend valid $i
         }
         set day [string range $option 6 end]
-        if {$day ni $dday} {
+        if {$day ni $valid} {
           puts stderr "not a valid day: $day"
-          puts stderr "use one of: $dday"
+          puts stderr "use one of: $valid"
           return $tpmg::error
         }
         set tpmg::date(day) $day
+        unset day valid
       }
       --month=* {
         for {set i 1} {$i <= 12} {incr i} {
-          lappend dmonth $i
+          lappend valid $i
         }
         set month [string range $option 8 end]
-        if {$month ni $dmonth} {
+        if {$month ni $valid} {
           puts stderr "not a valid month: $month"
-          puts stderr "use one of: $dmonth"
+          puts stderr "use one of: $valid"
           return $tpmg::error
         }
         set tpmg::date(month) $month
+        unset month valid
       }
       --year=* {
         set year [string range $option 7 end]
@@ -454,6 +456,7 @@ proc tpmg::Calendar {args} {
           return $tpmg::error
         }
         set tpmg::date(year) $year
+        unset year
       }
       --help {
         tpmg::Help "calendar"
@@ -724,6 +727,7 @@ proc tpmg::Information {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
+        unset valid
       }
       --button=* {
         set valid [list ok okcancel yesno yesnocancel retrycancel abortretrycancel]
@@ -733,6 +737,7 @@ proc tpmg::Information {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
+        unset valid
       }
       --help {
         tpmg::Help "information"
@@ -798,6 +803,7 @@ proc tpmg::List {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
+        unset valid
       }
       --options=* {
         set options [split [string range $option 10 end] ","]
@@ -811,6 +817,7 @@ proc tpmg::List {args} {
           puts stderr "use one of: $valid"
           return $tpmg::error
         }
+        unset valid
       }
       --default=* {
         set default [split [string range $option 10 end] ","]
@@ -917,13 +924,14 @@ proc tpmg::Notification {args} {
         set geometry [string range $option 11 end]
       }
       --icon=* {
-        set licon [list info error question warning]
+        set valid [list info error question warning]
         set icon [string range $option 7 end]
-        if {$icon ni $licon} {
+        if {$icon ni $valid} {
           puts stderr "not a valid icon: $icon"
-          puts stderr "use one of: $licon"
+          puts stderr "use one of: $valid"
           return $tpmg::error
         }
+        unset valid
       }
       --background=* {
         set bg [string range $option 13 end]
@@ -975,6 +983,7 @@ proc tpmg::Password {args} {
       }
       --nousername {
         set username "false"
+        set tpmg::value $username
       }
       --help {
         tpmg::Help "password"
@@ -992,7 +1001,7 @@ proc tpmg::Password {args} {
   ttk::entry .user -textvariable tpmg::text
   ttk::entry .pass -show "*" -textvariable tpmg::password
   ttk::button .ok -text "OK" -command {
-    if {$tpmg::text eq ""} {
+    if {$tpmg::value eq "false"} {
       set tpmg::response $tpmg::password
     } else {
       lappend tpmg::response \
@@ -1099,10 +1108,12 @@ proc tpmg::Progress {args} {
   ttk::label .label -textvariable tpmg::text
   ttk::progressbar .progress -mode $type -maximum $max -value $value \
     -variable tpmg::value
-  ttk::button .ok -text "OK" -state disabled \
-    -command {set tpmg::response $tpmg::ok}
-  ttk::button .cancel -text "Cancel" \
-    -command {set tpmg::response $tpmg::cancel}
+  ttk::button .ok -text "OK" -state disabled -command {
+    set tpmg::response $tpmg::ok
+  }
+  ttk::button .cancel -text "Cancel" -command {
+    set tpmg::response $tpmg::cancel
+  }
   pack .label .progress -in .f -fill x
   pack .f -padx 5 -pady 5 -fill x
   pack .ok .cancel -padx 10 -pady 10 -side left
@@ -1122,8 +1133,8 @@ proc tpmg::Progress {args} {
 proc tpmg::Scale {args} {
   set title "Adjust Value"
   set text  "Adjust value below:"
-  set from  0
-  set to    100
+  set min   0
+  set max   100
   set value 0
   set step  1
   foreach option {*}$args {
@@ -1135,17 +1146,16 @@ proc tpmg::Scale {args} {
         set text [string range $option 7 end]
       }
       --min=* {
-        set from [string range $option 6 end]
-        if {![string is integer $from]} {
-          puts stderr "not an integer: $from"
+        set min [string range $option 6 end]
+        if {![string is integer $min]} {
+          puts stderr "not an integer: $min"
           return $tpmg::error
         }
-        set tpmg::value $from
       }
       --max=* {
-        set to [string range $option 6 end]
-        if {![string is integer $to]} {
-          puts stderr "not an integer: $to"
+        set max [string range $option 6 end]
+        if {![string is integer $max]} {
+          puts stderr "not an integer: $max"
           return $tpmg::error
         }
       }
@@ -1156,6 +1166,7 @@ proc tpmg::Scale {args} {
           return $tpmg::error
         }
         set tpmg::value $value
+        unset value
       }
       --step=* {
         set step [string range $option 7 end]
@@ -1171,15 +1182,10 @@ proc tpmg::Scale {args} {
       }
     }
   }
-  # resolve possible conflict on value
-  if {$from != 0 && $value != 0} {
-    set tpmg::value $value
-  }
   ttk::labelframe .fscale -relief flat -text $text
   # ttk::scale looks better, but lacks the -resolution option
   tk::scale .scale -orient horizontal -sliderrelief groove \
-    -from $from -to $to -resolution $step \
-    -variable tpmg::value
+    -from $min -to $max -resolution $step -variable tpmg::value
   ttk::button .ok -text "OK" -command {
     set tpmg::response $tpmg::value
   }
@@ -1242,8 +1248,12 @@ proc tpmg::Text {args} {
     -xscrollcommand {.xscroll set} -yscrollcommand {.yscroll set}
   ttk::scrollbar .yscroll -orient vertical   -command {.text yview}
   ttk::scrollbar .xscroll -orient horizontal -command {.text xview}
-  ttk::button .ok -text "OK" -command {set tpmg::response $tpmg::ok}
-  ttk::button .cancel -text "Cancel" -command {set tpmg::response $tpmg::cancel}
+  ttk::button .ok -text "OK" -command {
+    set tpmg::response $tpmg::ok
+  }
+  ttk::button .cancel -text "Cancel" -command {
+    set tpmg::response $tpmg::cancel
+  }
   grid .text    -in .f -row 0 -column 0 -sticky nswe
   grid .yscroll -in .f -row 0 -column 1 -sticky ns
   grid .xscroll -in .f -row 1 -column 0 -sticky we
