@@ -294,7 +294,7 @@
   | --text=    | string       | set label text    | "Set options below:" |
   | --type=    | radio\|combo\|menu\|check | set list type | check |
   | --options= | csv          | set options list  |
-  | --default= | radio:string<br/>combo:string<br/>menu:string<br/>check:csv | radio:default option<br/>combo:default option<br/>menu:default menu<br/>check:set option to true |
+  | --default= | radio:string<br/>combo:string<br/>menu:string<br/>check:csv | default option<br/>default option<br/>default menu item<br/>set option to true |
   | --anchor=  | w\|e\|c      | list placement in window | w             |
   | --edit     |              | can edit combobox | read only            |
   | --help     |              | this help         |
