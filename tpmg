@@ -170,7 +170,7 @@ returns: the button name (ok, cancel, yes, no, abort, retry, ignore)
 example: tpmg --information --title="Are you sure?" --icon="question" --button="yesnocancel" "All data will be wiped!" "This action cannot be undone." "Proceed?"
     }
     variable List {
-Display an option list with radio buttons, combobox, check buttons or menu itesm.
+Display an option list with radio buttons, combobox, check buttons or menu items.
 Default type is check buttons.
 Configuration is done through "--options" option, with comma separated list.
 "Default" option set preselected option in a radio/combobox/menu list, or set "true" values in the check list.
@@ -193,7 +193,7 @@ options for List dialog:
 returns:
   radio: selected option on 'OK', 1 on 'Cancel', 255 on error
   combo: selected option on 'OK', 1 on 'Cancel', 255 on error
-  menu : clicked option on "Enter" key, 1 on 'Cancel', 255 on error
+  menu : clicked item on "Enter" key, 1 on 'Cancel', 255 on error
   check: true/false list on 'OK', 1 on 'Cancel', 255 on error
 
 example: tpmg --list --title="Select filetype" --text="Select filetype:" --type="radio" --options="Text File,RTF Document,Word Document" --default="Text File" --anchor="w"
