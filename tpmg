@@ -1055,7 +1055,7 @@ proc tpmg::Password {args} {
 # read from pipe helper proc/coroutine
 proc tpmg::readPipe {auto} {
   yield [after 1 [info coroutine]]
-  while {[gets stdin line] >= 0} {
+  while {[chan gets stdin line] >= 0} {
     if {[string range $line 0 4] eq "tpmg:"} {
       set line [string range $line 5 end]
       if {[string is digit $line]} {
