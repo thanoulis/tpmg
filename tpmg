@@ -10,6 +10,7 @@ if {$::tcl_platform(platform) eq "windows" && [encoding system] ne "utf-8" } {
 # VARIABLES
 #
 namespace eval tpmg {
+  variable version   {0.7.0}
   variable script    {}
   variable return    {}
   variable response  {}
@@ -1240,7 +1241,7 @@ proc tpmg::Text {args} {
       --file=*  {
         set file [file nativename [string range $option 7 end]]
         if {[file isfile $file] == 0 || [file readable $file] == 0} {
-          puts stderr "${::argv0}: cannot open $file"
+          puts stderr "[file tail $::argv0]: cannot open $file"
           return $tpmg::error
         }
       }
@@ -1450,7 +1451,7 @@ proc tpmg::readArgs {} {
         exit 0
       }
       --version {
-        tpmg::Version "0.7.0"
+        tpmg::Version $tpmg::version
         exit 0
       }
       default {
