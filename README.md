@@ -37,7 +37,7 @@
 * options:
   | option        | type    | description       | default       |
   |---------------|:-------:|-------------------|:-------------:|
-  | --title=      | string  | set window title  | "Select Date  |
+  | --title=      | string  | set window title  | "Select Date" |
   | --format=     | string  | format date       | "%a %d %b %Y" |
   | --day=        | integer | set initial day   | current day   |
   | --month=      | integer | set initial month | current month |
@@ -519,7 +519,7 @@
   |---------------|:------:|-------------------|:-------------:|
   | --title=      | string | set window title  | "Show Text"   |
   | --file=       | path   | text file to show |
-  | --edit        |        | can edit text     | cannot edit   |
+  | --edit        |        | can edit text     | no edit       |
   | --font=       | font   | font to use       | "TkFixedFont" |
   | other strings | string | text body (every string is a new line) |
   | --help        |        | this help         |
