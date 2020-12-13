@@ -10,7 +10,7 @@ if {$::tcl_platform(platform) eq "windows" && [encoding system] ne "utf-8" } {
 # VARIABLES
 #
 namespace eval tpmg {
-  variable version   {0.7.0}
+  variable version   {0.7.1}
   variable script    {}
   variable return    {}
   variable response  {}
