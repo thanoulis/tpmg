@@ -39,31 +39,31 @@ namespace eval tpmg {
   # namespace and variables for the help system
   namespace eval help {
     variable Basic {
-  usage: tpmg <options> <details>
+usage: tpmg <options> <details>
 
-  basic options:
-    dialog windows:
-      --calendar      display Calendar dialog
-      --color         display Color Select dialog
-      --directory     display Directory Select dialog
-      --entry         display Entry dialog
-      --filesave      display File Save dialog
-      --fileselect    display File Select dialog
-      --information   display Information dialog
-      --list          display List dialog
-      --notification  display Notification popup
-      --password      display Password dialog
-      --progress      display Progress dialog
-      --scale         display Scale dialog
-      --text          display Text dialog
+basic options:
+  dialog windows:
+    --calendar      display Calendar dialog
+    --color         display Color Select dialog
+    --directory     display Directory Select dialog
+    --entry         display Entry dialog
+    --filesave      display File Save dialog
+    --fileselect    display File Select dialog
+    --information   display Information dialog
+    --list          display List dialog
+    --notification  display Notification popup
+    --password      display Password dialog
+    --progress      display Progress dialog
+    --scale         display Scale dialog
+    --text          display Text dialog
 
-    help:
-      --help          this help
-      --help all      print options for all available dialogs
-      --help <dialog> print all available options for <dialog>
+  help:
+    --help          this help
+    --help all      print options for all available dialogs
+    --help <dialog> print all available options for <dialog>
 
-    other:
-      --version       print version information
+  other:
+    --version       print version information
     }
     variable Calendar {
 Display a date selection dialog.
@@ -417,7 +417,7 @@ proc tpmg::Button {w x y text command} {
 # main calendar dialog
 proc tpmg::Calendar {args} {
   set title "Select Date"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -487,12 +487,12 @@ proc tpmg::Calendar {args} {
 }
 
 ################################################################################
-# COLOR SELECT DIALOG
+# COLOR DIALOG
 #
 proc tpmg::Color {args} {
   set title "Select a Color"
   set color "#d9d9d9"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -522,12 +522,12 @@ proc tpmg::Color {args} {
 }
 
 ################################################################################
-# DIRECTORY SELECT DIALOG
+# DIRECTORY DIALOG
 #
 proc tpmg::Directory {args} {
   set title "Select a Directory"
   set exist "false"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -560,7 +560,7 @@ proc tpmg::Entry {args} {
   set title   "Enter Text"
   set text    [list "Enter text below:"]
   set default ""
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -622,14 +622,14 @@ proc tpmg::Entry {args} {
 }
 
 ################################################################################
-# FILE SAVE DIALOG
+# FILESAVE DIALOG
 #
 proc tpmg::FileSave {args} {
   set title     "Save File"
   set filetypes ""
   set file      ""
   set confirm   "true"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -665,13 +665,13 @@ proc tpmg::FileSave {args} {
 }
 
 ################################################################################
-# FILE SELECT DIALOG
+# FILESELECT DIALOG
 #
 proc tpmg::FileSelect {args} {
   set title     "Select Files"
   set filetypes ""
   set single    "true"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -713,7 +713,7 @@ proc tpmg::Information {args} {
   set title   ""
   set message ""
   set detail  [list]
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -784,7 +784,7 @@ proc tpmg::List {args} {
   set anchor  "w"
   set default ""
   set state   "readonly"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -920,7 +920,7 @@ proc tpmg::List {args} {
 }
 
 ################################################################################
-# NOTIFICATION
+# NOTIFICATION POPUP
 #
 proc tpmg::Notification {args} {
   set title    "tpmg Notification"
@@ -930,7 +930,7 @@ proc tpmg::Notification {args} {
   set bg       "yellow"
   set fg       "black"
   set text     ""
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -997,7 +997,7 @@ proc tpmg::Notification {args} {
 proc tpmg::Password {args} {
   set title    "Login As"
   set username "true"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -1081,7 +1081,7 @@ proc tpmg::Progress {args} {
   set auto  "false"
   set max   100
   set value 0
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -1158,7 +1158,7 @@ proc tpmg::Scale {args} {
   set max   100
   set value 0
   set step  1
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -1233,7 +1233,7 @@ proc tpmg::Text {args} {
   set edit  "false"
   set wrap  "none"
   set font  "TkFixedFont"
-  foreach option {*}$args {
+  foreach option $args {
     switch -glob -- $option {
       --title=* {
         set title [string range $option 8 end]
@@ -1329,8 +1329,8 @@ proc tpmg::Text {args} {
 ################################################################################
 # HELP SYSTEM
 #
-proc tpmg::Help {{args ""} {out "stdout"}} {
-  switch -- $args {
+proc tpmg::Help {{option ""} {out "stdout"}} {
+  switch -- $option {
     all {
       set all [info vars ::tpmg::help::*]
       foreach help $all {
@@ -1358,7 +1358,7 @@ proc tpmg::Help {{args ""} {out "stdout"}} {
     text         {set help $tpmg::help::Text}
     ""           {set help $tpmg::help::Basic}
     default {
-      puts stderr "unknown help option: $args"
+      puts stderr "unknown help option: $option"
       puts stderr $tpmg::help::Basic
       exit 255
     }
@@ -1376,74 +1376,69 @@ proc tpmg::Version {version} {
 ################################################################################
 # ARGUMENT PARSING
 #
-proc tpmg::readArgs {} {
-  set value 0
-  if {$::argc == 0} {
-    tpmg::Help {} stderr
-    exit 255
-  }
-  foreach option $::argv {
-    set optidx [lsearch -exact $::argv $option]
-    set args [lrange $::argv [expr {$optidx + 1}] end]
+proc tpmg::readArgs {args} {
+  foreach option $args {
+    set optidx [lsearch -exact $args $option]
+    set args [lrange $args [expr {$optidx + 1}] end]
     switch -- $option {
+      --calendar {
+        set tpmg::script [list tpmg::Calendar {*}$args]
+        return 0
+      }
       --color {
-        set tpmg::script [list tpmg::Color $args]
+        set tpmg::script [list tpmg::Color {*}$args]
         return 0
       }
       --dir {
-        set tpmg::script [list tpmg::Directory $args]
+        set tpmg::script [list tpmg::Directory {*}$args]
         return 0
       }
       --directory {
-        set tpmg::script [list tpmg::Directory $args]
-        return 0
-      }
-      --fileselect {
-        set tpmg::script [list tpmg::FileSelect $args]
-        return 0
-      }
-      --filesave {
-        set tpmg::script [list tpmg::FileSave $args]
-        return 0
-      }
-      --info {
-        set tpmg::script [list tpmg::Information $args]
-        return 0
-      }
-      --information {
-        set tpmg::script [list tpmg::Information $args]
-        return 0
-      }
-      --password {
-        set tpmg::script [list tpmg::Password $args]
+        set tpmg::script [list tpmg::Directory {*}$args]
         return 0
       }
       --entry {
-        set tpmg::script [list tpmg::Entry $args]
+        set tpmg::script [list tpmg::Entry {*}$args]
         return 0
       }
-      --scale {
-        set tpmg::script [list tpmg::Scale $args]
+      --filesave {
+        set tpmg::script [list tpmg::FileSave {*}$args]
         return 0
       }
-      --text {
-        set tpmg::script [list tpmg::Text $args]
+      --fileselect {
+        set tpmg::script [list tpmg::FileSelect {*}$args]
+        return 0
+      }
+      --info {
+        set tpmg::script [list tpmg::Information {*}$args]
+        return 0
+      }
+      --information {
+        set tpmg::script [list tpmg::Information {*}$args]
         return 0
       }
       --list {
-        set tpmg::script [list tpmg::List $args]
-        return 0
-      }
-      --progress {
-        set tpmg::script [list tpmg::Progress $args]
-        return 0
-      }
-      --calendar {
-        set tpmg::script [list tpmg::Calendar $args]
+        set tpmg::script [list tpmg::List {*}$args]
         return 0
       }
       --notification {
-        set tpmg::script [list tpmg::Notification $args]
+        set tpmg::script [list tpmg::Notification {*}$args]
+        return 0
+      }
+      --password {
+        set tpmg::script [list tpmg::Password {*}$args]
+        return 0
+      }
+      --progress {
+        set tpmg::script [list tpmg::Progress {*}$args]
+        return 0
+      }
+      --scale {
+        set tpmg::script [list tpmg::Scale {*}$args]
+        return 0
+      }
+      --text {
+        set tpmg::script [list tpmg::Text {*}$args]
         return 0
       }
       --help {
@@ -1468,7 +1463,11 @@ proc tpmg::readArgs {} {
 #
 bind all <KP_Enter> {event generate %W <Return>}
 wm protocol . WM_DELETE_WINDOW {exit 1}
-tpmg::readArgs
+if {$::argc == 0} {
+  tpmg::Help {} stderr
+  exit 255
+}
+tpmg::readArgs {*}$::argv
 set tpmg::return [{*}$tpmg::script]
 if false {
 } elseif {$tpmg::return eq $tpmg::error} {
