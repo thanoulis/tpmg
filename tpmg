@@ -469,6 +469,7 @@ proc tpmg::Calendar {args} {
     }
   }
   tpmg::calendarInit
+  ttk::frame .buttons
   ttk::button .ok -text "OK" -command {
     set tpmg::response $tpmg::date(date)
   }
@@ -477,8 +478,9 @@ proc tpmg::Calendar {args} {
   }
   bind all <Return> {.ok invoke}
   bind all <Escape> {.cancel invoke}
+  pack .ok .cancel -in .buttons -padx 10 -pady 5 -side left
   pack .calendar -fill both -expand true
-  pack .ok .cancel -padx 10 -pady 5 -side left
+  pack .buttons
   wm title     . $title
   wm resizable . 0 0
   focus .ok
