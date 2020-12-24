@@ -1380,8 +1380,8 @@ proc tpmg::Version {version} {
 #
 proc tpmg::readArgs {args} {
   foreach option $args {
-    set optidx [lsearch -exact $args $option]
-    set args [lrange $args [expr {$optidx + 1}] end]
+    set optidx [incr [lsearch -exact $args $option]]
+    set args [lrange $args $optidx end]
     switch -- $option {
       --calendar {
         set tpmg::script [list tpmg::Calendar {*}$args]
