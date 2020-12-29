@@ -364,7 +364,7 @@
   tpmg --notification --title="Notify Sith Lord" --delay="10" \
     --geometry="200x50+0+0" --icon="error" \
     --background="#f8a300" --foreground="#000000" \
-    "System failure" "Cannot execute order 66"
+    "System failure" "Cannot execute order: 66"
   ```
 
 * screenshot:
