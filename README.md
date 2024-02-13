@@ -520,6 +520,7 @@
   | --title=      | string | set window title  | "Show Text"   |
   | --file=       | path   | text file to show |
   | --edit        |        | can edit text     | no edit       |
+  | --wrap        |        | wrap text         | no wrap       |
   | --font=       | font   | font to use       | "TkFixedFont" |
   | other strings | string | text body (every string is a new line) |
   | --help        |        | this help         |
